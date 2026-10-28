@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Headshot Studio — Professional AI Headshots</title>
+<style>
+:root{--bg:#FAF9F6;--bg2:#F1EFE9;--ink:#1F1E1C;--grey:#6E6C68;--black:#111;--card:#fff;--star:#F59E0B}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+section{padding:100px 0}
+.eyebrow{font-size:13px;color:var(--grey);letter-spacing:.02em;margin:0 0 12px}
+h1{font-size:clamp(56px,9vw,96px);line-height:1.05;letter-spacing:-.02em;margin:0}
+h2{font-size:clamp(34px,5vw,52px);line-height:1.15;letter-spacing:-.01em;margin:0 0 12px}
+p{font-size:16px;color:var(--grey)} p strong{color:var(--ink)}
+.pill{display:inline-block;background:var(--black);color:#fff;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:600;border:0;cursor:pointer}
+.pill:hover{opacity:.9}
+.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.hero h1 span{font-family:Georgia,serif}
+.hero .sub{font-size:28px;color:var(--ink);font-weight:700;margin:18px 0 8px}
+.collage{position:relative;height:460px}
+.collage img{position:absolute;width:62%;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.18);object-fit:cover;aspect-ratio:3/4}
+.collage img:nth-child(1){left:0;top:20px;transform:rotate(-4deg)}
+.collage img:nth-child(2){right:0;top:0;transform:rotate(3deg)}
+.collage img:nth-child(3){left:18%;bottom:0;transform:rotate(-1deg);width:56%}
+.tag{position:absolute;background:#fff;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.try{background:var(--bg2)}
+.trycard{background:var(--card);border-radius:20px;max-width:680px;margin:0 auto;padding:32px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center}
+.trycard h2{font-size:28px}
+.thumbs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+.thumbs button{border:2px solid #ddd;background:#fff;border-radius:12px;padding:4px;cursor:pointer}
+.thumbs button.sel{border-color:#111}
+.thumbs img{width:72px;height:72px;object-fit:cover;border-radius:8px;display:block}
+.thumbs span{display:block;font-size:12px;color:var(--grey);padding:4px 0 2px}
+.preview{width:100%;border-radius:16px;aspect-ratio:4/3;object-fit:cover}
+.full{width:100%}
+.note{font-size:13px;color:var(--grey);margin-top:14px}
+.grid3{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.card{background:var(--card);border-radius:16px;padding:28px;box-shadow:0 6px 20px rgba(0,0,0,.04)}
+.stars{color:var(--star);letter-spacing:2px}
+.gallery{display:flex;gap:16px;overflow-x:auto;padding-bottom:12px}
+.gallery figure{flex:0 0 240px;margin:0}
+.gallery img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:16px}
+.gallery figcaption{margin-top:8px;color:var(--grey);font-size:14px}
+.ba-slider{position:relative;overflow:hidden;border-radius:20px;max-width:680px;margin:0 auto;aspect-ratio:4/5;background:#ddd;touch-action:none;cursor:ew-resize;user-select:none}
+.ba-slider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.ba-after-wrap{position:absolute;inset:0}
+.ba-after-wrap img{clip-path:inset(0 0 0 50%)}
+.ba-handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;transform:translateX(-1px)}
+.ba-handle span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.ba-label{position:absolute;top:14px;background:rgba(0,0,0,.65);color:#fff;padding:5px 10px;border-radius:8px;font-size:13px}
+.ba-label.left{left:14px}.ba-label.right{right:14px}
+details{background:var(--card);border-radius:14px;padding:20px 24px;margin:12px 0}
+details summary{font-weight:700;cursor:pointer;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary:after{content:"›";float:right;font-size:22px;line-height:1}
+footer{background:#0C0C0C;color:#bbb;padding:64px 0 32px}
+footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px}
+footer h3{color:#fff;margin-top:0}
+footer a{color:#bbb;text-decoration:none}
+@media(max-width:760px){section{padding:64px 0}.hero{grid-template-columns:1fr}.collage{height:380px}.grid3{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HERO: no top nav, left text / right tilted collage, in the spirit of the reference site, with our own brand and photos -->
+<section style="padding-top:72px">
+<div class="wrap hero">
+<div>
+<p class="eyebrow">AI HEADSHOT STUDIO</p>
+<h1>Headshot<br><span>Studio</span></h1>
+<p class="sub">Turn a phone photo into a professional portrait.</p>
+<p>Pick a style, upload 1–3 clear photos, and get a pack for LinkedIn, your resume and your company page. <strong>No studio booking. No payment in this prototype phase.</strong></p>
+<p><a class="pill" href="#try">Try it now</a></p>
+<p class="note">Prototype only — no payment yet. The full flow runs first; Paddle checkout is added only after the site works end to end. Demo faces below are AI-generated samples, not real customers.</p>
+</div>
+<div class="collage">
+<img src="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp" alt="Corporate grey studio sample">
+<span class="tag" style="left:6%;top:8%">Corporate</span>
+<img src="samples/media-generation-sample-outdoor-natural-0-01d88411-6406-4527-aed4-41c8c38aa8c5.webp" alt="Outdoor natural light sample">
+<span class="tag" style="right:6%;top:22%">Outdoor</span>
+<img src="samples/media-generation-sample-oil-painting-0-f5f82855-2dc6-4d51-a535-d031c4367540.webp" alt="Oil painting sample">
+<span class="tag" style="left:24%;bottom:12%">Artistic</span>
+</div>
+</div>
+</section>
+
+<!-- STYLE SWITCHER -->
+<!-- BEFORE & AFTER: approved real demos, 2026-10-28 user approved publishing these comparisons -->
+<section class="try">
+<div class="wrap">
+<p class="eyebrow">BEFORE &amp; AFTER</p>
+<h2>Real examples. Same person, new portrait.</h2>
+<p>Each style gets its own small slider. Drag the line in any box to compare — left is the original, right is the generated portrait.</p>
+<style>.ba-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.ba-grid .card{padding:16px}.ba-grid .ba-slider{max-width:none}.ba-grid .ba-handle span{width:36px;height:36px;font-size:14px}.ba-grid .ba-label{font-size:12px;padding:4px 8px}.ba-grid .pill{padding:12px 20px;font-size:15px}.ba-vars{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.ba-vars label{font-size:12px;color:#6E6C68}.ba-vars select{width:100%;padding:8px;margin-top:4px;border:1px solid #ddd;border-radius:8px;font-size:13px;background:#fff}.ba-note{font-size:12px;color:#6E6C68;text-align:center;margin:8px 0 0}@media(max-width:1000px){.ba-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.ba-grid{grid-template-columns:1fr}}</style>
+<div class="ba-grid">
+<div class="card"><strong>Avatar · Black suit</strong><div class="ba-slider"><img src="demo/woman-original-closeup.png" alt="Original photo"><div class="ba-after-wrap"><img src="demo/woman-avatar-v2.webp" alt="Generated portrait"></div><div class="ba-handle"><span>‹ ›</span></div><span class="ba-label left">原图</span><span class="ba-label right">生成后</span></div><p style="text-align:center;margin:14px 0 4px"><a class="pill" href="#try" data-style="avatar">试试这个风格</a></p></div>
+<div class="card"><strong>Woman · Full-body editorial</strong><div class="ba-slider" style="aspect-ratio:2/3"><img src="demo/woman-original-fullbody.jpg" alt="Original photo"><div class="ba-after-wrap"><img src="demo/woman-fullbody-v2.webp" alt="Generated portrait"></div><div class="ba-handle"><span>‹ ›</span></div><span class="ba-label left">原图</span><span class="ba-label right">生成后</span></div><p style="text-align:center;margin:14px 0 4px"><a class="pill" href="#try" data-style="woman-fullbody">试试这个风格</a></p></div>
+<div class="card"><strong>Man · Full-body editorial</strong><div class="ba-slider" style="aspect-ratio:2/3"><img src="demo/man-original-fullbody.jpg" alt="Original photo"><div class="ba-after-wrap"><img src="demo/man-fullbody-v2.webp" alt="Generated portrait"></div><div class="ba-handle"><span>‹ ›</span></div><span class="ba-label left">原图</span><span class="ba-label right">生成后</span></div><p style="text-align:center;margin:14px 0 4px"><a class="pill" href="#try" data-style="man-fullbody">试试这个风格</a></p></div>
+<div class="card"><strong>Corporate studio</strong><div class="ba-slider"><img src="demo/man-original-closeup.png" alt="Original photo"><div class="ba-after-wrap"><img src="demo/man-corporate-eu.webp" alt="Generated portrait"></div><div class="ba-handle"><span>‹ ›</span></div><span class="ba-label left">原图</span><span class="ba-label right">生成后</span></div><p style="text-align:center;margin:14px 0 4px"><a class="pill" href="#try" data-style="man-corporate">试试这个风格</a></p></div>
+<div class="card"><strong>Woman · Corporate studio</strong><div class="ba-slider"><img src="demo/woman-original-closeup.png" alt="Original photo"><div class="ba-after-wrap"><img src="demo/woman-corporate-eu.webp" alt="Generated portrait"></div><div class="ba-handle"><span>‹ ›</span></div><span class="ba-label left">原图</span><span class="ba-label right">生成后</span></div><p style="text-align:center;margin:14px 0 4px"><a class="pill" href="#try" data-style="woman-corporate">试试这个风格</a></p></div>
+<div class="card"><strong>Workplace</strong><div class="ba-slider"><img src="demo/woman-original-closeup.png" alt="Original photo"><div class="ba-after-wrap"><img src="demo/woman-workplace.webp" alt="Generated portrait"></div><div class="ba-handle"><span>‹ ›</span></div><span class="ba-label left">原图</span><span class="ba-label right">生成后</span></div><p style="text-align:center;margin:14px 0 4px"><a class="pill" href="#try" data-style="workplace">试试这个风格</a></p></div>
+</div>
+</div>
+</section>
+
+<!-- MAKE IT YOURS: outfit, background, styling and pose are variables, not fixed -->
+<section style="padding-top:20px">
+<div class="wrap">
+<p class="eyebrow">MAKE IT YOURS</p>
+<h2>Your face stays yours. Everything else can change.</h2>
+<p>Outfit, background, styling and pose are all choices, not fixed to a style. Pick a combination and the same person gets a different portrait.</p>
+<div class="grid3" style="grid-template-columns:repeat(2,1fr)">
+<div class="card"><strong>Outfit</strong><p>Suit, blazer, coat, casual — your choice.</p></div>
+<div class="card"><strong>Background</strong><p>Studio grey, street, park, office.</p></div>
+<div class="card"><strong>Pose</strong><p>Headshot, half-body, full-body.</p></div>
+<div class="card"><strong>Styling</strong><p>Natural, editorial, black &amp; white.</p></div>
+</div>
+</div>
+</section>
+
+<!-- TRY IT -->
+<section class="try" id="try">
+<div class="wrap">
+<div class="trycard">
+<p class="eyebrow">TRY IT NOW</p>
+<h2>Use your photo to try it.</h2>
+<p>Your photo becomes a professional portrait in your chosen style.</p>
+<p>你选的风格：<select id="tryStyle" style="padding:10px;border:1px solid #ddd;border-radius:8px;font-size:15px;font-weight:bold">
+<option value="avatar" selected>Avatar · Black suit</option>
+<option value="woman-fullbody">Woman · Full-body editorial</option>
+<option value="man-fullbody">Man · Full-body editorial</option>
+<option value="man-corporate">Corporate studio</option>
+<option value="woman-corporate">Woman · Corporate studio</option>
+<option value="workplace">Workplace</option>
+</select>（点上方任意一个“试试这个风格”会自动带到这里并换选项）</p>
+<div class="ba-vars" id="tryVars">
+<label>发长 Hair length<select id="tryHairLength"><option>Short</option><option>Medium</option><option selected>Long</option></select></label>
+<label>发型 Hairstyle<select id="tryHairstyle"><option>Straight</option><option selected>Slightly wavy</option><option>Curly</option><option>Natural coily</option><option>Braids</option><option>Locs</option><option>Afro</option><option>Fade / short neat</option><option>Ponytail</option><option>Low bun</option></select></label>
+<label>背景 Background<select id="tryBackground"><option selected>Grey studio</option><option>Office</option><option>Park</option><option>City street</option><option>Cafe terrace</option></select></label>
+<label>服装 Outfit<select id="tryOutfit"><option selected>Black suit</option><option>Navy suit + white shirt</option><option>Blazer + white shirt</option><option>Dark coat</option><option>Camel coat</option></select></label>
+</div>
+<p class="ba-note" style="text-align:left">已选：Long · Slightly wavy · Grey studio · Black suit</p>
+<p style="margin-top:16px">上传照片：</p>
+<input type="file" id="photo" accept="image/*" style="margin:16px 0">
+<div id="upreview"></div>
+<p><button class="pill full" onclick="document.getElementById('status').textContent='Prototype: upload preview works. Generation runs in the next test step — no payment, no photo is published.'">Choose a photo</button></p>
+<p id="status" class="note">No signup needed. Photos are not published. Source and generated photos are deleted after 7 days.</p>
+</div>
+</div>
+</section>
+
+<!-- TESTIMONIALS: layout only, clearly marked as placeholders for the prototype -->
+<section>
+<div class="wrap">
+<p class="eyebrow">REVIEWS</p>
+<h2>Loved by professionals worldwide.</h2>
+<p class="note">Prototype layout only — these review cards are placeholders. Real customer reviews must replace them before any public launch. Do not publish with placeholder reviews.</p>
+<div class="grid3">
+<div class="card"><div class="stars">★★★★★</div><p>“Finally a headshot I actually use on LinkedIn — it looks like me, just on a good day.”</p><p class="note">— Sample layout · Product manager · United States</p></div>
+<div class="card"><div class="stars">★★★★★</div><p>“Our whole remote team got matching portraits without booking a photographer.”</p><p class="note">— Sample layout · Operations lead · United Kingdom</p></div>
+<div class="card"><div class="stars">★★★★★</div><p>“Simple to use, and the black-and-white version is now my speaker bio photo.”</p><p class="note">— Sample layout · Consultant · Germany</p></div>
+</div>
+</div>
+</section>
+
+<!-- STYLE GALLERY -->
+<section class="try">
+<div class="wrap">
+<p class="eyebrow">STYLE GALLERY</p>
+<h2>Explore the styles.</h2>
+<div class="gallery">
+<figure><img src="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp" alt=""><figcaption>Corporate · Grey studio</figcaption></figure>
+<figure><img src="samples/media-generation-sample-outdoor-natural-0-01d88411-6406-4527-aed4-41c8c38aa8c5.webp" alt=""><figcaption>Outdoor · Natural light</figcaption></figure>
+<figure><img src="samples/media-generation-sample-bw-artistic-0-e5636223-4433-4c25-88ec-645d5f316bf1.webp" alt=""><figcaption>Black &amp; white · Artistic</figcaption></figure>
+<figure><img src="samples/media-generation-sample-oil-painting-0-f5f82855-2dc6-4d51-a535-d031c4367540.webp" alt=""><figcaption>Oil painting · Artistic</figcaption></figure>
+</div>
+<div class="grid3" style="margin-top:24px">
+<div class="card"><strong>For work</strong><p>LinkedIn, resumes, company pages and press kits.</p></div>
+<div class="card"><strong>One upload, many looks</strong><p>Switch styles and compare, without re-uploading.</p></div>
+<div class="card"><strong>Yours to use</strong><p>Full commercial rights to your pack, once payment is added.</p></div>
+</div>
+</div>
+</section>
+
+<!-- PACKS: prices shown, payment deferred -->
+<section>
+<div class="wrap">
+<p class="eyebrow">PACKS — PRICES FOR LATER, NO PAYMENT YET</p>
+<h2>Simple, one-time packs.</h2>
+<div class="grid3">
+<div class="card"><strong>$19</strong><p>20 photos · 2 styles</p></div>
+<div class="card"><strong>$29</strong><p>40 photos · 4 styles</p></div>
+<div class="card"><strong>$49</strong><p>100 photos · All styles</p></div>
+</div>
+<p class="note">Planned model only. Payment is deliberately not connected in this phase.</p>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="try">
+<div class="wrap">
+<p class="eyebrow">FAQ</p>
+<h2>Common questions.</h2>
+<details open><summary>What is Headshot Studio?</summary><p>It turns your everyday photos into professional portraits and artistic portraits. This prototype shows the flow and styles; payment comes later, after the flow works end to end.</p></details>
+<details><summary>Can I try it for free in the prototype?</summary><p>Yes, in this prototype phase there is no payment. The upload preview above is the test flow; full generation is tested with a real photo next.</p></details>
+<details><summary>Is my photo safe?</summary><p>Photos are used only to generate your pack, are never published, are never used to train a model, and are deleted after 7 days.</p></details>
+<details><summary>What styles are available?</summary><p>Corporate grey studio, outdoor natural light, black-and-white artistic, and full-body editorial in the prototype. Outfit, background, styling and pose can be changed within any style. More combinations can be added after launch.</p></details>
+<details><summary>Can I use a generated photo as a passport photo?</summary><p>No. Official passport and ID photos must be a real, unedited photo that meets the issuing authority's rules. We do not sell AI-generated photos for official ID use.</p></details>
+</div>
+</section>
+
+<section style="padding-top:20px">
+<div class="wrap">
+<p class="eyebrow">CHOOSE A STYLE</p>
+<h2>One photo, many professional looks.</h2>
+<p>Tap a style to preview it. In the real product, the same person's photo is restyled — these prototype previews use different sample faces, so judge the style, not the likeness.</p>
+<div class="thumbs" id="thumbs">
+<button class="sel" data-img="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp"><img src="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp" alt=""><span>Corporate</span></button>
+<button data-img="samples/media-generation-sample-outdoor-natural-0-01d88411-6406-4527-aed4-41c8c38aa8c5.webp"><img src="samples/media-generation-sample-outdoor-natural-0-01d88411-6406-4527-aed4-41c8c38aa8c5.webp" alt=""><span>Outdoor</span></button>
+<button data-img="samples/media-generation-sample-bw-artistic-0-e5636223-4433-4c25-88ec-645d5f316bf1.webp"><img src="samples/media-generation-sample-bw-artistic-0-e5636223-4433-4c25-88ec-645d5f316bf1.webp" alt=""><span>Black &amp; white</span></button>
+<button data-img="samples/media-generation-sample-oil-painting-0-f5f82855-2dc6-4d51-a535-d031c4367540.webp"><img src="samples/media-generation-sample-oil-painting-0-f5f82855-2dc6-4d51-a535-d031c4367540.webp" alt=""><span>Oil painting</span></button>
+</div>
+<img id="preview" class="preview" src="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp" alt="Selected style preview">
+</div>
+</section>
+
+<footer>
+<div class="wrap">
+<div><h3>Headshot Studio</h3><p>Professional portraits from your phone photos. Prototype — not yet for sale.</p></div>
+<div><h3>Sitemap</h3><p><a href="#try">Try it</a><br><a href="#">Styles</a><br><a href="#">FAQ</a><br><a href="#">Privacy (to be added for Paddle review)</a></p></div>
+<div><h3>About</h3><p>Photos are deleted after 7 days. No payment is connected in this prototype phase.</p></div>
+</div>
+<div class="wrap"><p class="note">© Headshot Studio prototype. Brand, photos and layout are original to this prototype; the reference site's brand, badges and review content were not copied.</p></div>
+</footer>
+
+<script>
+document.querySelectorAll('#thumbs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#thumbs button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+  document.getElementById('preview').src=b.dataset.img;
+});
+/* Variables live in the upload section below, not in the photo boxes.
+   Clicking a card's try button jumps to #try and sets the style there. */
+document.querySelectorAll('.ba-vars').forEach(vars=>{
+  const note=vars.nextElementSibling;
+  if(!note || !note.classList.contains('ba-note')) return;
+  vars.querySelectorAll('select').forEach(s=>s.addEventListener('change',()=>{
+    note.textContent='已选：'+[...vars.querySelectorAll('select')].map(x=>x.value).join(' · ');
+  }));
+});
+const STYLE_VARS={
+  avatar:{hairLength:['Long','Medium','Short'],hairstyle:['Slightly wavy','Straight','Curly','Loose hair','Ponytail','Low bun'],background:['Grey studio','Office','Park'],outfit:['Black suit','Navy suit + white shirt','Blazer + white shirt']},
+  'woman-fullbody':{hairLength:['Long','Medium'],hairstyle:['Ponytail','Slightly wavy','Loose hair','Braids','Natural coily'],background:['Cafe terrace','Park','City street'],outfit:['Camel coat','Dark coat','Blazer + white shirt']},
+  'man-fullbody':{hairLength:['Short','Medium'],hairstyle:['Fade / short neat','Straight','Curly','Natural coily','Afro'],background:['City street','Park','Cafe terrace'],outfit:['Dark coat','Camel coat','Navy suit + white shirt']},
+  'man-corporate':{hairLength:['Short','Medium'],hairstyle:['Fade / short neat','Straight','Curly','Natural coily'],background:['Grey studio','Office'],outfit:['Navy suit + white shirt','Black suit','Blazer + white shirt']},
+  'woman-corporate':{hairLength:['Medium','Long','Short'],hairstyle:['Slightly wavy','Straight','Curly','Natural coily','Braids','Low bun','Ponytail'],background:['Grey studio','Office'],outfit:['Blazer + white shirt','Black suit','Navy suit + white shirt']},
+  workplace:{hairLength:['Medium','Long','Short'],hairstyle:['Slightly wavy','Straight','Curly','Natural coily','Low bun','Ponytail'],background:['Office','Grey studio'],outfit:['Blazer + white shirt','Black suit','Navy suit + white shirt']}
+};
+function applyStyle(id){
+  const v=STYLE_VARS[id]; if(!v) return;
+  const map={tryHairLength:v.hairLength,tryHairstyle:v.hairstyle,tryBackground:v.background,tryOutfit:v.outfit};
+  Object.entries(map).forEach(([elId,opts])=>{
+    const sel=document.getElementById(elId);
+    sel.innerHTML=opts.map(o=>'<option>'+o+'</option>').join('');
+    sel.value=opts[0];
+  });
+  const note=document.querySelector('#tryVars + .ba-note');
+  if(note) note.textContent='已选：'+[v.hairLength[0],v.hairstyle[0],v.background[0],v.outfit[0]].join(' · ');
+}
+document.getElementById('tryStyle').addEventListener('change',e=>applyStyle(e.target.value));
+document.querySelectorAll('.ba-grid .pill').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const styleSel=document.getElementById('tryStyle');
+    if(btn.dataset.style && styleSel){ styleSel.value=btn.dataset.style; applyStyle(btn.dataset.style); }
+  });
+});
+applyStyle('avatar');
+/* Draggable before/after sliders — one per style box */
+document.querySelectorAll('.ba-slider').forEach(slider=>{
+  const after=slider.querySelector('.ba-after-wrap img'), handle=slider.querySelector('.ba-handle');
+  let dragging=false;
+  function setPos(p){ p=Math.max(2,Math.min(98,p)); handle.style.left=p+'%'; after.style.clipPath='inset(0 0 0 '+p+'%)'; }
+  function fromEvent(e){ const r=slider.getBoundingClientRect(); const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left; setPos(x/r.width*100); }
+  slider.addEventListener('pointerdown',e=>{dragging=true;slider.setPointerCapture(e.pointerId);fromEvent(e);});
+  slider.addEventListener('pointermove',e=>{if(dragging) fromEvent(e);});
+  slider.addEventListener('pointerup',()=>dragging=false);
+  slider.addEventListener('pointercancel',()=>dragging=false);
+  setPos(50);
+});
+document.getElementById('photo').onchange=e=>{
+  const p=document.getElementById('uppreview'); p.innerHTML='';
+  [...e.target.files].slice(0,3).forEach(f=>{const i=document.createElement('img');i.style.cssText='width:110px;height:110px;object-fit:cover;border-radius:10px;margin:4px';i.src=URL.createObjectURL(f);p.appendChild(i);});
+};
+</script>
+</body>
+</html>
