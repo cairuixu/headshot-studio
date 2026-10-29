@@ -5,32 +5,32 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Headshot Studio — Professional AI Headshots</title>
 <style>
-:root{--bg:#FAF9F6;--bg2:#F1EFE9;--ink:#1F1E1C;--grey:#6E6C68;--black:#111;--card:#fff;--star:#F59E0B}
+:root{--bg:#FFFFFF;--bg2:#F4F7F3;--ink:#22302A;--grey:#5F7168;--black:#22302A;--sage:#5E8C6A;--card:#F9FBF7;--star:#D9A441}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.7}
 .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
 section{padding:100px 0}
 .eyebrow{font-size:13px;color:var(--grey);letter-spacing:.02em;margin:0 0 12px}
-h1{font-size:clamp(56px,9vw,96px);line-height:1.05;letter-spacing:-.02em;margin:0}
+h1{font-size:clamp(48px,7vw,76px);line-height:1.08;letter-spacing:-.01em;margin:0;font-weight:800}
 h2{font-size:clamp(34px,5vw,52px);line-height:1.15;letter-spacing:-.01em;margin:0 0 12px}
 p{font-size:16px;color:var(--grey)} p strong{color:var(--ink)}
-.pill{display:inline-block;background:var(--black);color:#fff;padding:14px 28px;border-radius:999px;text-decoration:none;font-weight:600;border:0;cursor:pointer}
+.pill{display:inline-block;background:var(--sage);color:#fff;padding:14px 28px;border-radius:14px;text-decoration:none;font-weight:700;border:0;cursor:pointer}
 .pill:hover{opacity:.9}
 .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
-.hero h1 span{font-family:Georgia,serif}
+.hero h1 span{color:var(--sage)}
 .hero .sub{font-size:28px;color:var(--ink);font-weight:700;margin:18px 0 8px}
-.collage{position:relative;height:540px}
-.collage-card{position:absolute;width:54%;margin:0;transition:transform .35s ease,box-shadow .35s ease;will-change:transform;cursor:pointer}
-.collage-card:nth-child(1){left:0;top:60px;transform:rotate(-4deg);z-index:1}
-.collage-card:nth-child(2){right:0;top:0;transform:rotate(3deg);z-index:2}
-.collage-card:nth-child(3){left:25%;bottom:0;transform:rotate(-1deg);width:50%;z-index:3}
-.collage-card img{width:100%;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.18);object-fit:cover;aspect-ratio:3/4;display:block;transition:box-shadow .35s ease}
-.collage-card:hover{transform:rotate(0deg) scale(1.06);z-index:10}
-.collage-card:hover img{box-shadow:0 28px 56px rgba(0,0,0,.28)}
-.collage-card .tag{position:absolute;left:12px;bottom:12px;background:#fff;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.12);transition:background .35s ease,color .35s ease}
-.collage-card:hover .tag{background:#111;color:#fff}
+.collage{display:grid;grid-template-columns:1fr 1fr;gap:16px;height:auto}
+.collage-card{position:relative;width:auto;margin:0;transition:transform .3s ease,box-shadow .3s ease;cursor:pointer}
+.collage-card:nth-child(1){grid-column:1 / -1}
+.collage-card:nth-child(2){}
+.collage-card:nth-child(3){}
+.collage-card img{width:100%;border-radius:24px;box-shadow:0 8px 24px rgba(34,48,42,.10);object-fit:cover;aspect-ratio:4/3;display:block;transition:box-shadow .3s ease}
+.collage-card:hover{transform:translateY(-4px) scale(1.02)}
+.collage-card:hover img{box-shadow:0 16px 32px rgba(34,48,42,.16)}
+.collage-card .tag{position:absolute;left:12px;bottom:12px;background:var(--sage);color:#fff;padding:6px 12px;border-radius:999px;font-size:13px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.collage-card:hover .tag{background:#4A7557;color:#fff}
 .try{background:var(--bg2)}
-.trycard{background:var(--card);border-radius:20px;max-width:680px;margin:0 auto;padding:32px;box-shadow:0 10px 30px rgba(0,0,0,.06);text-align:center}
+.trycard{background:#fff;border:1px solid #E2EADF;border-radius:24px;max-width:680px;margin:0 auto;padding:32px;box-shadow:0 8px 24px rgba(34,48,42,.06);text-align:center}
 .trycard h2{font-size:28px}
 .thumbs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:20px 0}
 .thumbs button{border:2px solid #ddd;background:#fff;border-radius:12px;padding:4px;cursor:pointer}
@@ -41,7 +41,7 @@ p{font-size:16px;color:var(--grey)} p strong{color:var(--ink)}
 .full{width:100%}
 .note{font-size:13px;color:var(--grey);margin-top:14px}
 .grid3{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.card{background:var(--card);border-radius:16px;padding:28px;box-shadow:0 6px 20px rgba(0,0,0,.04)}
+.card{background:var(--card);border:1px solid #E2EADF;border-radius:20px;padding:28px;box-shadow:none}
 .stars{color:var(--star);letter-spacing:2px}
 .gallery{display:flex;gap:16px;overflow-x:auto;padding-bottom:12px}
 .gallery figure{flex:0 0 240px;margin:0}
@@ -55,27 +55,32 @@ p{font-size:16px;color:var(--grey)} p strong{color:var(--ink)}
 .ba-handle span{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 .ba-label{position:absolute;top:14px;background:rgba(0,0,0,.65);color:#fff;padding:5px 10px;border-radius:8px;font-size:13px}
 .ba-label.left{left:14px}.ba-label.right{right:14px}
-details{background:var(--card);border-radius:14px;padding:20px 24px;margin:12px 0}
+details{background:#fff;border:1px solid #E2EADF;border-radius:16px;padding:20px 24px;margin:12px 0}
 details summary{font-weight:700;cursor:pointer;list-style:none}
 details summary::-webkit-details-marker{display:none}
 details summary:after{content:"›";float:right;font-size:22px;line-height:1}
-footer{background:#0C0C0C;color:#bbb;padding:64px 0 32px}
+footer{background:#22302A;color:#CBD8CE;padding:64px 0 32px}
 footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px}
 footer h3{color:#fff;margin-top:0}
-footer a{color:#bbb;text-decoration:none}
-.lang-switch{position:fixed;top:12px;right:12px;z-index:100;display:flex;gap:6px}
-.lang-switch select{border:1px solid #ddd;background:#fff;border-radius:999px;padding:7px 10px;font-size:13px;font-weight:600;cursor:pointer}
+footer a{color:#CBD8CE;text-decoration:none}
+.topnav{position:sticky;top:0;z-index:90;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #E2EADF}
+.topnav .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:14px;padding-bottom:14px}
+.topnav .brand{font-weight:800;color:var(--ink);text-decoration:none;font-size:18px}
+.topnav nav{display:flex;gap:24px}
+.topnav nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+.lang-switch{position:static;display:flex;gap:6px}
+.lang-switch select{border:1px solid #DDE7DC;background:#fff;border-radius:12px;padding:7px 10px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink)}
 img{max-width:100%}
 body{overflow-x:hidden}
 @media(max-width:760px){.ba-grid{grid-template-columns:1fr!important}.ba-vars{grid-template-columns:1fr!important}.trycard{padding:24px 20px}section{padding:56px 0}.hero{gap:24px}}
-@media(max-width:480px){.wrap{padding:0 16px}h1{font-size:44px}h2{font-size:30px}.collage{height:380px}.pill{padding:12px 20px}.trycard{padding:20px 16px}select{max-width:100%}}
-@media(max-width:760px){section{padding:64px 0}.hero{grid-template-columns:1fr}.collage{height:430px}.grid3{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}}
+@media(max-width:480px){.topnav .wrap{flex-wrap:wrap;gap:12px}.topnav nav{gap:16px}.wrap{padding:0 16pxh1{font-size:44px}h2{font-size:30px}.collage{height:auto}.pill{padding:12px 20px}.trycard{padding:20px 16px}select{max-width:100%}}
+@media(max-width:760px){section{padding:64px 0}.hero{grid-template-columns:1fr}.collage{height:auto}.grid3{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<div class="lang-switch"><select id="langSelect" aria-label="Language"><option value="en">English</option><option value="zh">中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div>
+<header class="topnav"><div class="wrap"><a class="brand" href="#">Headshot Studio</a><nav><a href="#examples">Examples</a><a href="#try">Try it</a><a href="#faq">FAQ</a></nav><div class="lang-switch"><select id="langSelect" aria-label="Language"><option value="en">English</option><option value="zh">中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div></div></header>
 
-<!-- HERO: no top nav, left text / right tilted collage, in the spirit of the reference site, with our own brand and photos -->
+<!-- HERO: Scandinavian fresh style — clean rounded photo grid, sage accent, top nav -->
 <section style="padding-top:72px">
 <div class="wrap hero">
 <div>
@@ -194,7 +199,7 @@ body{overflow-x:hidden}
 </section>
 
 <!-- FAQ -->
-<section class="try">
+<section class="try" id="faq">
 <div class="wrap">
 <p class="eyebrow">FAQ</p>
 <h2>Common questions.</h2>
@@ -989,6 +994,16 @@ const TR = {
   "pt": "Mapa do site",
   "ja": "サイトマップ",
   "ko": "사이트맵"
+ },
+ "Examples": {
+  "zh": "示例",
+  "es": "Ejemplos",
+  "fr": "Exemples",
+  "de": "Beispiele",
+  "it": "Esempi",
+  "pt": "Exemplos",
+  "ja": "事例",
+  "ko": "예시"
  },
  "Try it": {
   "zh": "试试看",
