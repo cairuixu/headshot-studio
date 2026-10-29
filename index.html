@@ -64,8 +64,7 @@ footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px}
 footer h3{color:#fff;margin-top:0}
 footer a{color:#bbb;text-decoration:none}
 .lang-switch{position:fixed;top:12px;right:12px;z-index:100;display:flex;gap:6px}
-.lang-switch button{border:1px solid #ddd;background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer}
-.lang-switch button.active{background:#111;color:#fff;border-color:#111}
+.lang-switch select{border:1px solid #ddd;background:#fff;border-radius:999px;padding:7px 10px;font-size:13px;font-weight:600;cursor:pointer}
 img{max-width:100%}
 body{overflow-x:hidden}
 @media(max-width:760px){.ba-grid{grid-template-columns:1fr!important}.ba-vars{grid-template-columns:1fr!important}.trycard{padding:24px 20px}section{padding:56px 0}.hero{gap:24px}}
@@ -74,7 +73,7 @@ body{overflow-x:hidden}
 </style>
 </head>
 <body>
-<div class="lang-switch"><button data-lang-btn="en" class="active">EN</button><button data-lang-btn="zh">中文</button></div>
+<div class="lang-switch"><select id="langSelect" aria-label="Language"><option value="en">English</option><option value="zh">中文</option><option value="es">Español</option><option value="fr">Français</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="pt">Português</option><option value="ja">日本語</option><option value="ko">한국어</option></select></div>
 
 <!-- HERO: no top nav, left text / right tilted collage, in the spirit of the reference site, with our own brand and photos -->
 <section style="padding-top:72px">
@@ -130,10 +129,10 @@ body{overflow-x:hidden}
 <option value="workplace">Workplace</option>
 </select>（点上方任意一个“试试这个风格”会自动带到这里并换选项）</p>
 <div class="ba-vars" id="tryVars">
-<label>发长 Hair length<select id="tryHairLength"><option>Short</option><option>Medium</option><option selected>Long</option></select></label>
-<label>发型 Hairstyle<select id="tryHairstyle"><option>Straight</option><option selected>Slightly wavy</option><option>Curly</option><option>Natural coily</option><option>Braids</option><option>Locs</option><option>Afro</option><option>Fade / short neat</option><option>Ponytail</option><option>Low bun</option></select></label>
-<label>背景 Background<select id="tryBackground"><option selected>Grey studio</option><option>Office</option><option>Park</option><option>City street</option><option>Cafe terrace</option></select></label>
-<label>服装 Outfit<select id="tryOutfit"><option selected>Black suit</option><option>Navy suit + white shirt</option><option>Blazer + white shirt</option><option>Dark coat</option><option>Camel coat</option></select></label>
+<label>发长 Hair length<select id="tryHairLength"><option value="Short">Short</option><option value="Medium">Medium</option><option value="Long" selected>Long</option></select></label>
+<label>发型 Hairstyle<select id="tryHairstyle"><option value="Straight">Straight</option><option value="Slightly wavy" selected>Slightly wavy</option><option value="Curly">Curly</option><option value="Natural coily">Natural coily</option><option value="Braids">Braids</option><option value="Locs">Locs</option><option value="Afro">Afro</option><option value="Fade / short neat">Fade / short neat</option><option value="Ponytail">Ponytail</option><option value="Low bun">Low bun</option></select></label>
+<label>背景 Background<select id="tryBackground"><option value="Grey studio" selected>Grey studio</option><option value="Office">Office</option><option value="Park">Park</option><option value="City street">City street</option><option value="Cafe terrace">Cafe terrace</option></select></label>
+<label>服装 Outfit<select id="tryOutfit"><option value="Black suit" selected>Black suit</option><option value="Navy suit + white shirt">Navy suit + white shirt</option><option value="Blazer + white shirt">Blazer + white shirt</option><option value="Dark coat">Dark coat</option><option value="Camel coat">Camel coat</option></select></label>
 </div>
 <p class="ba-note" style="text-align:left">已选：Long · Slightly wavy · Grey studio · Black suit</p>
 <p style="margin-top:16px">上传照片：</p>
@@ -325,159 +324,1077 @@ document.getElementById('generateBtn').addEventListener('click', async ()=>{
 });
 </script>
 
+
 <script>
-/* Language auto-adapt: default English (main push), Chinese for zh browsers.
-   Manual choice is remembered in localStorage. */
-const I18N_MAP = {
-"AI HEADSHOT STUDIO": {zh: "AI 职业头像工作室"},
-"Turn a phone photo into a professional portrait.": {zh: "用手机照片生成专业职业照。"},
-"Pick a style, upload 1–3 clear photos, and get a pack for LinkedIn, your resume and your company page.": {zh: "选一个风格，上传 1-3 张清晰照片，即可获得可用于领英、简历和公司主页的照片包。"},
-"Try it now": {zh: "立即试试"},
-"Prototype only — no payment yet. The full flow runs first; Paddle checkout is added only after the site works end to end. Demo faces below are AI-generated samples, not real customers.": {zh: "目前为测试阶段，暂未接通支付。先跑通完整流程，确认无误后再接 Paddle 支付。下方示例人脸为 AI 生成样张，并非真实客户。"},
-"BEFORE & AFTER": {zh: "前后对比"},
-"Real examples. Same person, new portrait.": {zh: "真实示例。同一个人，全新肖像。"},
-"Each style gets its own small slider. Drag the line in any box to compare — left is the original, right is the generated portrait.": {zh: "每种风格都有一个小滑块。拖动任意框中的线条进行对比——左侧为原图，右侧为生成后的肖像。"},
-"Avatar · Black suit": {zh: "分身 · 黑色西装"},
-"Woman · Full-body editorial": {zh: "女士 · 全身编辑风"},
-"Man · Full-body editorial": {zh: "男士 · 全身编辑风"},
-"Corporate studio": {zh: "企业影棚"},
-"Woman · Corporate studio": {zh: "女士 · 企业影棚"},
-"Workplace": {zh: "职场"},
-"原图": {en: "Original"},
-"生成后": {en: "Generated"},
-"试试这个风格": {en: "Try this style"},
-"TRY IT NOW": {zh: "现在就试试"},
-"Use your photo to try it.": {zh: "用你的照片试试看。"},
-"Your photo becomes a professional portrait in your chosen style.": {zh: "你的照片会变成你所选风格的专业肖像。"},
-"发长 Hair length": {en: "Hair length", zh: "发长"},
-"发型 Hairstyle": {en: "Hairstyle", zh: "发型"},
-"背景 Background": {en: "Background", zh: "背景"},
-"服装 Outfit": {en: "Outfit", zh: "服装"},
-"上传照片：": {en: "Upload a photo:", zh: "上传照片："},
-"Generate my portrait": {zh: "生成我的肖像"},
-"你选的风格：": {en: "Your style:", zh: "你选的风格："},
-"（点上方任意一个“试试这个风格”会自动带到这里并换选项）": {en: "(Click any \u201cTry this style\u201d button above to jump here and switch options)", zh: "（点上方任意一个“试试这个风格”会自动带到这里并换选项）"},
-"No signup needed. Photos are not published. Source and generated photos are deleted after 7 days. Generation usually takes 10–60 seconds — please keep this page open.": {zh: "无需注册。照片不会公开。原图和生成图将在 7 天后删除。生成通常需要 10-60 秒，请保持页面打开。"},
-"MAKE IT YOURS": {zh: "让它成为你的"},
-"Your face stays yours. Everything else can change.": {zh: "你的脸还是你的。其他一切都可以改变。"},
-"Outfit, background, styling and pose are all choices, not fixed to a style. Pick a combination and the same person gets a different portrait.": {zh: "服装、背景、造型和姿势都是选择，不一定固定在某种风格上。选一个组合，同一个人会得到不同的肖像。"},
-"Outfit": {zh: "服装"},
-"Suit, blazer, coat, casual — your choice.": {zh: "西装、西装外套、外套、休闲装——随你选择。"},
-"Background": {zh: "背景"},
-"Studio grey, street, park, office.": {zh: "工作室灰、街道、公园、办公室。"},
-"Pose": {zh: "姿势"},
-"Headshot, half-body, full-body.": {zh: "爆头、半身、全身。"},
-"Styling": {zh: "造型"},
-"Natural, editorial, black & white.": {zh: "自然、编辑、黑白。"},
-"REVIEWS": {zh: "评价"},
-"Loved by professionals worldwide.": {zh: "深受全球专业人士喜爱。"},
-"Prototype layout only — these review cards are placeholders. Real customer reviews must replace them before any public launch. Do not publish with placeholder reviews.": {zh: "仅为原型排版——这些评价卡片为占位内容。正式上线前必须替换为真实客户评价。请勿带着占位评价发布。"},
-"STYLE GALLERY": {zh: "风格画廊"},
-"Explore the styles.": {zh: "探索各种风格。"},
-"Corporate · Grey studio": {zh: "企业 · 灰色影棚"},
-"Outdoor · Natural light": {zh: "户外 · 自然光"},
-"Black & white · Artistic": {zh: "黑白 · 艺术"},
-"Oil painting · Artistic": {zh: "油画 · 艺术"},
-"For work": {zh: "用于工作"},
-"LinkedIn, resumes, company pages and press kits.": {zh: "领英、简历、公司主页和新闻资料包。"},
-"One upload, many looks": {zh: "一次上传，多种造型"},
-"Switch styles and compare, without re-uploading.": {zh: "切换风格并对比，无需重新上传。"},
-"Yours to use": {zh: "归你使用"},
-"Full commercial rights to your pack, once payment is added.": {zh: "接通支付后，你的照片包拥有完整商用权。"},
-"FAQ": {zh: "常见问题"},
-"Common questions.": {zh: "常见问题。"},
-"What is Headshot Studio?": {zh: "什么是 Headshot Studio？"},
-"It turns your everyday photos into professional portraits and artistic portraits. This prototype shows the flow and styles; payment comes later, after the flow works end to end.": {zh: "它能把你的日常照片变成专业肖像和艺术肖像。本原型展示流程和风格；支付将在流程跑通后再接通。"},
-"Can I try it for free in the prototype?": {zh: "在原型阶段可以免费试用吗？"},
-"Yes, in this prototype phase there is no payment. The upload preview above is the test flow; full generation is tested with a real photo next.": {zh: "可以，在原型阶段没有支付。上面的上传预览是测试流程；完整生成已用真实照片测试过。"},
-"Is my photo safe?": {zh: "我的照片安全吗？"},
-"Photos are used only to generate your pack, are never published, are never used to train a model, and are deleted after 7 days.": {zh: "照片仅用于生成你的照片包，从不公开，从不用于训练模型，并将在 7 天后删除。"},
-"What styles are available?": {zh: "有哪些风格可选？"},
-"Corporate grey studio, outdoor natural light, black-and-white artistic, and full-body editorial in the prototype. Outfit, background, styling and pose can be changed within any style. More combinations can be added after launch.": {zh: "原型中有企业灰影棚、户外自然光、黑白艺术和全身编辑风。服装、背景、造型和姿势在任何风格内都可以更换。上线后还可以增加更多组合。"},
-"Can I use a generated photo as a passport photo?": {zh: "生成图能用作护照照片吗？"},
-"No. Official passport and ID photos must be a real, unedited photo that meets the issuing authority's rules. We do not sell AI-generated photos for official ID use.": {zh: "不能。官方护照和证件照片必须是符合发证机构规则的真实、未编辑照片。我们不出售用于官方证件的 AI 生成照片。"},
-"Professional portraits from your phone photos. Prototype — not yet for sale.": {zh: "用手机照片生成专业肖像。原型阶段——暂未开售。"},
-"Sitemap": {zh: "网站地图"},
-"Try it": {zh: "试试看"},
-"Styles": {zh: "风格"},
-"Privacy (to be added for Paddle review)": {zh: "隐私政策（Paddle 审核时补齐）"},
-"About": {zh: "关于"},
-"Photos are deleted after 7 days. No payment is connected in this prototype phase.": {zh: "照片将在 7 天后删除。原型阶段暂未接通支付。"},
-"© Headshot Studio prototype. Brand, photos and layout are original to this prototype; the reference site's brand, badges and review content were not copied.": {zh: "© Headshot Studio 原型。品牌、照片和排版均为本原型原创；未复制参考站点的品牌、徽章和评价内容。"},
-"Please choose a photo first.": {zh: "请先选择一张照片。"},
-"Download your portrait": {zh: "下载你的肖像"},
-"Corporate": {zh: "企业"},
-"Outdoor": {zh: "户外"},
-"Avatar": {zh: "分身"}
+/* Multi-language: English default (main push). Auto-detect browser language,
+   fallback to English, manual choice remembered in localStorage.
+   Worker prompt values stay English regardless of UI language. */
+const TR = {
+ "Turn a phone photo into a professional portrait.": {
+  "zh": "用手机照片生成专业职业照。",
+  "es": "Convierte una foto de tu teléfono en un retrato profesional.",
+  "fr": "Transformez une photo de téléphone en portrait professionnel.",
+  "de": "Verwandle ein Handyfoto in ein professionelles Porträt.",
+  "it": "Trasforma una foto del telefono in un ritratto professionale.",
+  "pt": "Transforme uma foto do celular em um retrato profissional.",
+  "ja": "スマホの写真をプロのポートレートに変えます。",
+  "ko": "휴대폰 사진을 전문적인 초상화로 바꿔드립니다."
+ },
+ "Pick a style, upload 1–3 clear photos, and get a pack for LinkedIn, your resume and your company page.": {
+  "zh": "选一个风格，上传 1-3 张清晰照片，即可获得可用于领英、简历和公司主页的照片包。",
+  "es": "Elige un estilo, sube 1–3 fotos claras y recibe un paquete para LinkedIn, tu currículum y la página de tu empresa.",
+  "fr": "Choisissez un style, téléchargez 1 à 3 photos nettes et recevez un pack pour LinkedIn, votre CV et la page de votre entreprise.",
+  "de": "Wähle einen Stil, lade 1–3 klare Fotos hoch und erhalte ein Paket für LinkedIn, deinen Lebenslauf und deine Unternehmensseite.",
+  "it": "Scegli uno stile, carica 1–3 foto nitide e ricevi un pacchetto per LinkedIn, il tuo CV e la pagina aziendale.",
+  "pt": "Escolha um estilo, envie 1–3 fotos nítidas e receba um pacote para LinkedIn, seu currículo e a página da empresa.",
+  "ja": "スタイルを選び、1～3枚の鮮明な写真をアップロードすれば、LinkedInや履歴書、会社ページ用の写真セットが手に入ります。",
+  "ko": "스타일을 선택하고 선명한 사진 1~3장을 업로드하면 LinkedIn, 이력서, 회사 페이지용 사진 세트를 받을 수 있습니다."
+ },
+ "Try it now": {
+  "zh": "立即试试",
+  "es": "Pruébalo ahora",
+  "fr": "Essayez maintenant",
+  "de": "Jetzt ausprobieren",
+  "it": "Provalo ora",
+  "pt": "Experimente agora",
+  "ja": "今すぐ試す",
+  "ko": "지금 체험하기"
+ },
+ "Prototype only — no payment yet. The full flow runs first; Paddle checkout is added only after the site works end to end. Demo faces below are AI-generated samples, not real customers.": {
+  "zh": "目前为测试阶段，暂未接通支付。先跑通完整流程，确认无误后再接 Paddle 支付。下方示例人脸为 AI 生成样张，并非真实客户。",
+  "es": "Solo prototipo — aún sin pago. Primero funciona todo el flujo; el pago con Paddle se añadirá solo cuando el sitio funcione de principio a fin. Las caras de muestra abajo son ejemplos generados por IA, no clientes reales.",
+  "fr": "Prototype uniquement — aucun paiement pour le moment. Le flux complet fonctionne d’abord ; le paiement Paddle sera ajouté seulement une fois le site entièrement fonctionnel. Les visages de démonstration ci-dessous sont des exemples générés par IA, pas de vrais clients.",
+  "de": "Nur Prototyp — noch keine Zahlung. Zuerst läuft der komplette Ablauf; Paddle-Checkout wird erst hinzugefügt, wenn die Seite durchgehend funktioniert. Die Beispielgesichter unten sind KI-generierte Beispiele, keine echten Kunden.",
+  "it": "Solo prototipo — nessun pagamento ancora. Prima funziona l’intero flusso; il pagamento Paddle verrà aggiunto solo quando il sito funzionerà fino in fondo. I volti demo qui sotto sono esempi generati dall’IA, non clienti reali.",
+  "pt": "Apenas protótipo — ainda sem pagamento. Primeiro o fluxo completo funciona; o pagamento via Paddle só será adicionado quando o site funcionar de ponta a ponta. Os rostos de demonstração abaixo são exemplos gerados por IA, não clientes reais.",
+  "ja": "プロトタイプのみ — まだ決済はありません。まず全体の流れを動作させ、サイトが最後まで動いてから Paddle 決済を追加します。下のサンプル顔は AI 生成のサンプルで、実際の顧客ではありません。",
+  "ko": "프로토타입 단계입니다 — 아직 결제는 없습니다. 먼저 전체 흐름이 동작한 뒤, 사이트가 끝까지 동작하면 Paddle 결제를 추가합니다. 아래 샘플 얼굴은 AI 생성 샘플이며 실제 고객이 아닙니다."
+ },
+ "BEFORE & AFTER": {
+  "zh": "前后对比",
+  "es": "ANTES Y DESPUÉS",
+  "fr": "AVANT / APRÈS",
+  "de": "VORHER / NACHHER",
+  "it": "PRIMA E DOPO",
+  "pt": "ANTES E DEPOIS",
+  "ja": "ビフォー＆アフター",
+  "ko": "전후 비교"
+ },
+ "Real examples. Same person, new portrait.": {
+  "zh": "真实示例。同一个人，全新肖像。",
+  "es": "Ejemplos reales. La misma persona, un retrato nuevo.",
+  "fr": "Vrais exemples. La même personne, un nouveau portrait.",
+  "de": "Echte Beispiele. Dieselbe Person, ein neues Porträt.",
+  "it": "Esempi reali. La stessa persona, un nuovo ritratto.",
+  "pt": "Exemplos reais. A mesma pessoa, um novo retrato.",
+  "ja": "実際の例。同じ人物、新しいポートレート。",
+  "ko": "실제 예시. 같은 사람, 새로운 초상화."
+ },
+ "Each style gets its own small slider. Drag the line in any box to compare — left is the original, right is the generated portrait.": {
+  "zh": "每种风格都有一个小滑块。拖动任意框中的线条进行对比——左侧为原图，右侧为生成后的肖像。",
+  "es": "Cada estilo tiene su propio control deslizante. Arrastra la línea en cualquier cuadro para comparar: a la izquierda está la foto original, a la derecha el retrato generado.",
+  "fr": "Chaque style a son propre petit curseur. Faites glisser la ligne dans n’importe quel cadre pour comparer : à gauche l’original, à droite le portrait généré.",
+  "de": "Jeder Stil hat einen eigenen kleinen Schieberegler. Ziehe die Linie in einem Kasten, um zu vergleichen: links das Original, rechts das generierte Porträt.",
+  "it": "Ogni stile ha il suo piccolo cursore. Trascina la linea in qualsiasi riquadro per confrontare: a sinistra l’originale, a destra il ritratto generato.",
+  "pt": "Cada estilo tem seu próprio controle deslizante. Arraste a linha em qualquer quadro para comparar: à esquerda está a foto original, à direita o retrato gerado.",
+  "ja": "各スタイルに小さなスライダーがあります。任意のボックスの線をドラッグして比較できます — 左が元の写真、右が生成されたポートレートです。",
+  "ko": "각 스타일마다 작은 슬라이더가 있습니다. 아무 상자에서 선을 드래그해 비교하세요 — 왼쪽이 원본, 오른쪽이 생성된 초상화입니다."
+ },
+ "Avatar · Black suit": {
+  "zh": "分身 · 黑色西装",
+  "es": "Avatar · Traje negro",
+  "fr": "Avatar · Costume noir",
+  "de": "Avatar · Schwarzer Anzug",
+  "it": "Avatar · Abito nero",
+  "pt": "Avatar · Terno preto",
+  "ja": "アバター · 黒スーツ",
+  "ko": "아바타 · 블랙 슈트"
+ },
+ "Woman · Full-body editorial": {
+  "zh": "女士 · 全身编辑风",
+  "es": "Mujer · Editorial de cuerpo entero",
+  "fr": "Femme · Éditorial plein pied",
+  "de": "Frau · Ganzkörper-Editorial",
+  "it": "Donna · Editoriale a figura intera",
+  "pt": "Mulher · Editorial de corpo inteiro",
+  "ja": "女性 · 全身エディトリアル",
+  "ko": "여성 · 전신 에디토리얼"
+ },
+ "Man · Full-body editorial": {
+  "zh": "男士 · 全身编辑风",
+  "es": "Hombre · Editorial de cuerpo entero",
+  "fr": "Homme · Éditorial plein pied",
+  "de": "Mann · Ganzkörper-Editorial",
+  "it": "Uomo · Editoriale a figura intera",
+  "pt": "Homem · Editorial de corpo inteiro",
+  "ja": "男性 · 全身エディトリアル",
+  "ko": "남성 · 전신 에디토리얼"
+ },
+ "Corporate studio": {
+  "zh": "企业影棚",
+  "es": "Estudio corporativo",
+  "fr": "Studio corporate",
+  "de": "Corporate-Studio",
+  "it": "Studio aziendale",
+  "pt": "Estúdio corporativo",
+  "ja": "コーポレートスタジオ",
+  "ko": "기업 스튜디오"
+ },
+ "Woman · Corporate studio": {
+  "zh": "女士 · 企业影棚",
+  "es": "Mujer · Estudio corporativo",
+  "fr": "Femme · Studio corporate",
+  "de": "Frau · Corporate-Studio",
+  "it": "Donna · Studio aziendale",
+  "pt": "Mulher · Estúdio corporativo",
+  "ja": "女性 · コーポレートスタジオ",
+  "ko": "여성 · 기업 스튜디오"
+ },
+ "Workplace": {
+  "zh": "职场",
+  "es": "Lugar de trabajo",
+  "fr": "Lieu de travail",
+  "de": "Arbeitsplatz",
+  "it": "Ambiente di lavoro",
+  "pt": "Local de trabalho",
+  "ja": "職場",
+  "ko": "직장"
+ },
+ "Original": {
+  "zh": "原图",
+  "es": "Original",
+  "fr": "Original",
+  "de": "Original",
+  "it": "Originale",
+  "pt": "Original",
+  "ja": "元の写真",
+  "ko": "원본"
+ },
+ "Generated": {
+  "zh": "生成后",
+  "es": "Generado",
+  "fr": "Généré",
+  "de": "Generiert",
+  "it": "Generato",
+  "pt": "Gerado",
+  "ja": "生成後",
+  "ko": "생성 후"
+ },
+ "Try this style": {
+  "zh": "试试这个风格",
+  "es": "Prueba este estilo",
+  "fr": "Essayez ce style",
+  "de": "Diesen Stil ausprobieren",
+  "it": "Prova questo stile",
+  "pt": "Experimente este estilo",
+  "ja": "このスタイルを試す",
+  "ko": "이 스타일 체험하기"
+ },
+ "TRY IT NOW": {
+  "zh": "现在就试试",
+  "es": "PRUÉBALO AHORA",
+  "fr": "ESSAYEZ MAINTENANT",
+  "de": "JETZT AUSPROBIEREN",
+  "it": "PROVALO ORA",
+  "pt": "EXPERIMENTE AGORA",
+  "ja": "今すぐ試す",
+  "ko": "지금 체험하기"
+ },
+ "Use your photo to try it.": {
+  "zh": "用你的照片试试看。",
+  "es": "Usa tu foto para probarlo.",
+  "fr": "Utilisez votre photo pour l’essayer.",
+  "de": "Probiere es mit deinem Foto aus.",
+  "it": "Usa la tua foto per provarlo.",
+  "pt": "Use sua foto para experimentar.",
+  "ja": "あなたの写真で試してみましょう。",
+  "ko": "내 사진으로 체험해 보세요."
+ },
+ "Your photo becomes a professional portrait in your chosen style.": {
+  "zh": "你的照片会变成你所选风格的专业肖像。",
+  "es": "Tu foto se convierte en un retrato profesional con el estilo que elijas.",
+  "fr": "Votre photo devient un portrait professionnel dans le style de votre choix.",
+  "de": "Dein Foto wird zu einem professionellen Porträt in deinem gewählten Stil.",
+  "it": "La tua foto diventa un ritratto professionale nello stile che hai scelto.",
+  "pt": "Sua foto se torna um retrato profissional no estilo escolhido.",
+  "ja": "あなたの写真が、選んだスタイルのプロのポートレートになります。",
+  "ko": "내 사진이 선택한 스타일의 전문 초상화가 됩니다."
+ },
+ "Your style:": {
+  "zh": "你选的风格：",
+  "es": "Tu estilo:",
+  "fr": "Votre style :",
+  "de": "Dein Stil:",
+  "it": "Il tuo stile:",
+  "pt": "Seu estilo:",
+  "ja": "あなたのスタイル：",
+  "ko": "내 스타일:"
+ },
+ "(Click any “Try this style” button above to jump here and switch options)": {
+  "zh": "（点上方任意一个“试试这个风格”会自动带到这里并换选项）",
+  "es": "(Haz clic en cualquier botón “Prueba este estilo” arriba para saltar aquí y cambiar las opciones)",
+  "fr": "(Cliquez sur un bouton “Essayez ce style” ci-dessus pour venir ici et changer les options)",
+  "de": "(Klicke oben auf einen Button “Diesen Stil ausprobieren”, um hierher zu springen und die Optionen zu wechseln)",
+  "it": "(Clicca un pulsante “Prova questo stile” qui sopra per arrivare qui e cambiare le opzioni)",
+  "pt": "(Clique em qualquer botão “Experimente este estilo” acima para vir aqui e trocar as opções)",
+  "ja": "（上の「このスタイルを試す」ボタンをクリックすると、ここに移動してオプションが切り替わります）",
+  "ko": "(위에서 “이 스타일 체험하기” 버튼을 클릭하면 여기로 이동해 옵션을 바꿀 수 있습니다)"
+ },
+ "Hair length": {
+  "zh": "发长",
+  "es": "Largo del cabello",
+  "fr": "Longueur des cheveux",
+  "de": "Haarlänge",
+  "it": "Lunghezza dei capelli",
+  "pt": "Comprimento do cabelo",
+  "ja": "髪の長さ",
+  "ko": "머리 길이"
+ },
+ "Hairstyle": {
+  "zh": "发型",
+  "es": "Peinado",
+  "fr": "Coiffure",
+  "de": "Frisur",
+  "it": "Acconciatura",
+  "pt": "Penteado",
+  "ja": "ヘアスタイル",
+  "ko": "헤어스타일"
+ },
+ "Background": {
+  "zh": "背景",
+  "es": "Fondo",
+  "fr": "Fond",
+  "de": "Hintergrund",
+  "it": "Sfondo",
+  "pt": "Fundo",
+  "ja": "背景",
+  "ko": "배경"
+ },
+ "Outfit": {
+  "zh": "服装",
+  "es": "Vestimenta",
+  "fr": "Tenue",
+  "de": "Outfit",
+  "it": "Outfit",
+  "pt": "Roupa",
+  "ja": "服装",
+  "ko": "의상"
+ },
+ "Upload a photo:": {
+  "zh": "上传照片：",
+  "es": "Sube una foto:",
+  "fr": "Téléchargez une photo :",
+  "de": "Foto hochladen:",
+  "it": "Carica una foto:",
+  "pt": "Envie uma foto:",
+  "ja": "写真をアップロード：",
+  "ko": "사진 업로드:"
+ },
+ "Generate my portrait": {
+  "zh": "生成我的肖像",
+  "es": "Generar mi retrato",
+  "fr": "Générer mon portrait",
+  "de": "Mein Porträt generieren",
+  "it": "Genera il mio ritratto",
+  "pt": "Gerar meu retrato",
+  "ja": "私のポートレートを生成",
+  "ko": "내 초상화 생성하기"
+ },
+ "No signup needed. Photos are not published. Source and generated photos are deleted after 7 days. Generation usually takes 10–60 seconds — please keep this page open.": {
+  "zh": "无需注册。照片不会公开。原图和生成图将在 7 天后删除。生成通常需要 10-60 秒，请保持页面打开。",
+  "es": "No necesitas registrarte. Las fotos no se publican. Las fotos originales y generadas se eliminan a los 7 días. La generación suele tardar 10–60 segundos — mantén esta página abierta.",
+  "fr": "Aucune inscription requise. Les photos ne sont pas publiées. Les photos d’origine et générées sont supprimées après 7 jours. La génération prend généralement 10 à 60 secondes — gardez cette page ouverte.",
+  "de": "Keine Anmeldung nötig. Fotos werden nicht veröffentlicht. Original- und generierte Fotos werden nach 7 Tagen gelöscht. Die Generierung dauert in der Regel 10–60 Sekunden — bitte diese Seite offen lassen.",
+  "it": "Nessuna registrazione richiesta. Le foto non vengono pubblicate. Le foto originali e generate vengono eliminate dopo 7 giorni. La generazione richiede di solito 10–60 secondi — tieni aperta questa pagina.",
+  "pt": "Não é preciso se cadastrar. As fotos não são publicadas. As fotos originais e geradas são excluídas após 7 dias. A geração geralmente leva 10–60 segundos — mantenha esta página aberta.",
+  "ja": "登録は不要です。写真は公開されません。元の写真と生成された写真は7日後に削除されます。生成には通常10～60秒かかります — このページを開いたままにしてください。",
+  "ko": "가입이 필요 없습니다. 사진은 공개되지 않습니다. 원본과 생성 사진은 7일 후에 삭제됩니다. 생성은 보통 10~60초가 걸립니다 — 이 페이지를 열어 두세요."
+ },
+ "MAKE IT YOURS": {
+  "zh": "让它成为你的",
+  "es": "HAZLO TUYO",
+  "fr": "FAITES-LE VÔTRE",
+  "de": "MACH ES ZU DEINEM",
+  "it": "FALLO TUO",
+  "pt": "FAÇA DO SEU JEITO",
+  "ja": "あなたらしく",
+  "ko": "나만의 것으로"
+ },
+ "Your face stays yours. Everything else can change.": {
+  "zh": "你的脸还是你的。其他一切都可以改变。",
+  "es": "Tu cara sigue siendo tuya. Todo lo demás puede cambiar.",
+  "fr": "Votre visage reste le vôtre. Tout le reste peut changer.",
+  "de": "Dein Gesicht bleibt deins. Alles andere kann sich ändern.",
+  "it": "Il tuo viso resta il tuo. Tutto il resto può cambiare.",
+  "pt": "Seu rosto continua sendo seu. Todo o resto pode mudar.",
+  "ja": "あなたの顔はあなたのままです。それ以外はすべて変えられます。",
+  "ko": "내 얼굴은 그대로입니다. 나머지는 모두 바꿀 수 있습니다."
+ },
+ "Outfit, background, styling and pose are all choices, not fixed to a style. Pick a combination and the same person gets a different portrait.": {
+  "zh": "服装、背景、造型和姿势都是选择，不一定固定在某种风格上。选一个组合，同一个人会得到不同的肖像。",
+  "es": "La vestimenta, el fondo, el peinado y la pose son opciones, no están fijas a un estilo. Elige una combinación y la misma persona obtendrá un retrato diferente.",
+  "fr": "La tenue, le fond, la coiffure et la pose sont des choix, pas des éléments fixes d’un style. Choisissez une combinaison et la même personne obtiendra un portrait différent.",
+  "de": "Outfit, Hintergrund, Styling und Pose sind alles Optionen, nicht an einen Stil gebunden. Wähle eine Kombination und dieselbe Person erhält ein anderes Porträt.",
+  "it": "Outfit, sfondo, acconciatura e posa sono tutte scelte, non fissate a uno stile. Scegli una combinazione e la stessa persona otterrà un ritratto diverso.",
+  "pt": "Roupa, fundo, penteado e pose são escolhas, não fixas a um estilo. Escolha uma combinação e a mesma pessoa terá um retrato diferente.",
+  "ja": "服装、背景、ヘアスタイル、ポーズはすべて選択肢で、スタイルに固定されていません。組み合わせを選べば、同じ人物でも違うポートレートになります。",
+  "ko": "의상, 배경, 스타일링, 포즈는 모두 선택 사항이며 특정 스타일에 고정되지 않습니다. 조합을 선택하면 같은 사람도 다른 초상화를 얻을 수 있습니다."
+ },
+ "Suit, blazer, coat, casual — your choice.": {
+  "zh": "西装、西装外套、外套、休闲装——随你选择。",
+  "es": "Traje, blazer, abrigo, informal — tú eliges.",
+  "fr": "Costume, blazer, manteau, décontracté — à vous de choisir.",
+  "de": "Anzug, Blazer, Mantel, lässig — deine Wahl.",
+  "it": "Abito, blazer, cappotto, casual — a tua scelta.",
+  "pt": "Terno, blazer, casaco, casual — você escolhe.",
+  "ja": "スーツ、ブレザー、コート、カジュアル — あなたの選択です。",
+  "ko": "슈트, 블레이저, 코트, 캐주얼 — 선택은 자유입니다."
+ },
+ "Studio grey, street, park, office.": {
+  "zh": "工作室灰、街道、公园、办公室。",
+  "es": "Gris de estudio, calle, parque, oficina.",
+  "fr": "Gris studio, rue, parc, bureau.",
+  "de": "Studio-Grau, Straße, Park, Büro.",
+  "it": "Grigio studio, strada, parco, ufficio.",
+  "pt": "Cinza de estúdio, rua, parque, escritório.",
+  "ja": "スタジオグレー、街、公園、オフィス。",
+  "ko": "스튜디오 그레이, 거리, 공원, 사무실."
+ },
+ "Pose": {
+  "zh": "姿势",
+  "es": "Pose",
+  "fr": "Pose",
+  "de": "Pose",
+  "it": "Posa",
+  "pt": "Pose",
+  "ja": "ポーズ",
+  "ko": "포즈"
+ },
+ "Headshot, half-body, full-body.": {
+  "zh": "爆头、半身、全身。",
+  "es": "Retrato de cabeza, medio cuerpo, cuerpo entero.",
+  "fr": "Portrait tête, mi-corps, plein pied.",
+  "de": "Kopfporträt, Halbfigur, Ganzfigur.",
+  "it": "Primo piano, mezza figura, figura intera.",
+  "pt": "Retrato de rosto, meio corpo, corpo inteiro.",
+  "ja": "顔アップ、半身、全身。",
+  "ko": "얼굴 클로즈업, 상반신, 전신."
+ },
+ "Styling": {
+  "zh": "造型",
+  "es": "Estilo",
+  "fr": "Style",
+  "de": "Styling",
+  "it": "Styling",
+  "pt": "Estilo",
+  "ja": "スタイリング",
+  "ko": "스타일링"
+ },
+ "Natural, editorial, black & white.": {
+  "zh": "自然、编辑、黑白。",
+  "es": "Natural, editorial, blanco y negro.",
+  "fr": "Naturel, éditorial, noir et blanc.",
+  "de": "Natürlich, editorial, schwarz-weiß.",
+  "it": "Naturale, editoriale, bianco e nero.",
+  "pt": "Natural, editorial, preto e branco.",
+  "ja": "ナチュラル、エディトリアル、白黒。",
+  "ko": "자연스러움, 에디토리얼, 흑백."
+ },
+ "REVIEWS": {
+  "zh": "评价",
+  "es": "RESEÑAS",
+  "fr": "AVIS",
+  "de": "BEWERTUNGEN",
+  "it": "RECENSIONI",
+  "pt": "AVALIAÇÕES",
+  "ja": "レビュー",
+  "ko": "후기"
+ },
+ "Loved by professionals worldwide.": {
+  "zh": "深受全球专业人士喜爱。",
+  "es": "Amado por profesionales de todo el mundo.",
+  "fr": "Apprécié par des professionnels du monde entier.",
+  "de": "Weltweit von Profis geschätzt.",
+  "it": "Amato dai professionisti di tutto il mondo.",
+  "pt": "Amado por profissionais do mundo todo.",
+  "ja": "世界中のプロフェッショナルに愛されています。",
+  "ko": "전 세계 전문가들에게 사랑받고 있습니다."
+ },
+ "Prototype layout only — these review cards are placeholders. Real customer reviews must replace them before any public launch. Do not publish with placeholder reviews.": {
+  "zh": "仅为原型排版——这些评价卡片为占位内容。正式上线前必须替换为真实客户评价。请勿带着占位评价发布。",
+  "es": "Solo maquetación de prototipo — estas tarjetas de reseñas son marcadores. Deben reemplazarse con reseñas reales antes de cualquier lanzamiento público. No publiques con reseñas de marcador.",
+  "fr": "Maquette de prototype uniquement — ces cartes d’avis sont des emplacements réservés. Elles doivent être remplacées par de vrais avis clients avant tout lancement public. Ne publiez pas avec des avis réservés.",
+  "de": "Nur Prototyp-Layout — diese Bewertungskarten sind Platzhalter. Sie müssen vor einem öffentlichen Start durch echte Kundenbewertungen ersetzt werden. Nicht mit Platzhalter-Bewertungen veröffentlichen.",
+  "it": "Solo layout di prototipo — queste schede di recensione sono segnaposto. Devono essere sostituite con recensioni reali prima di qualsiasi lancio pubblico. Non pubblicare con recensioni segnaposto.",
+  "pt": "Apenas layout de protótipo — estes cartões de avaliação são marcadores. Devem ser substituídos por avaliações reais antes de qualquer lançamento público. Não publique com avaliações de marcador.",
+  "ja": "プロトタイプのレイアウトのみ — これらのレビューカードはプレースホルダーです。正式公開前に実際の顧客レビューに置き換える必要があります。プレースホルダーのまま公開しないでください。",
+  "ko": "프로토타입 레이아웃일 뿐입니다 — 이 후기 카드는 자리 표시자입니다. 정식 출시 전에 실제 고객 후기로 교체해야 합니다. 자리 표시자 후기와 함께 공개하지 마세요."
+ },
+ "STYLE GALLERY": {
+  "zh": "风格画廊",
+  "es": "GALERÍA DE ESTILOS",
+  "fr": "GALERIE DE STYLES",
+  "de": "STIL-GALERIE",
+  "it": "GALLERIA DI STILI",
+  "pt": "GALERIA DE ESTILOS",
+  "ja": "スタイルギャラリー",
+  "ko": "스타일 갤러리"
+ },
+ "Explore the styles.": {
+  "zh": "探索各种风格。",
+  "es": "Explora los estilos.",
+  "fr": "Explorez les styles.",
+  "de": "Entdecke die Stile.",
+  "it": "Esplora gli stili.",
+  "pt": "Explore os estilos.",
+  "ja": "スタイルを探索しましょう。",
+  "ko": "스타일을 둘러보세요."
+ },
+ "Corporate · Grey studio": {
+  "zh": "企业 · 灰色影棚",
+  "es": "Corporativo · Estudio gris",
+  "fr": "Corporate · Studio gris",
+  "de": "Corporate · Graues Studio",
+  "it": "Aziendale · Studio grigio",
+  "pt": "Corporativo · Estúdio cinza",
+  "ja": "コーポレート · グレースタジオ",
+  "ko": "기업 · 그레이 스튜디오"
+ },
+ "Outdoor · Natural light": {
+  "zh": "户外 · 自然光",
+  "es": "Exterior · Luz natural",
+  "fr": "Extérieur · Lumière naturelle",
+  "de": "Outdoor · Natürliches Licht",
+  "it": "Esterno · Luce naturale",
+  "pt": "Exterior · Luz natural",
+  "ja": "屋外 · 自然光",
+  "ko": "야외 · 자연광"
+ },
+ "Black & white · Artistic": {
+  "zh": "黑白 · 艺术",
+  "es": "Blanco y negro · Artístico",
+  "fr": "Noir et blanc · Artistique",
+  "de": "Schwarz-Weiß · Künstlerisch",
+  "it": "Bianco e nero · Artistico",
+  "pt": "Preto e branco · Artístico",
+  "ja": "白黒 · アーティスティック",
+  "ko": "흑백 · 아티스틱"
+ },
+ "Oil painting · Artistic": {
+  "zh": "油画 · 艺术",
+  "es": "Pintura al óleo · Artístico",
+  "fr": "Peinture à l’huile · Artistique",
+  "de": "Ölgemälde · Künstlerisch",
+  "it": "Pittura a olio · Artistico",
+  "pt": "Pintura a óleo · Artístico",
+  "ja": "油絵 · アーティスティック",
+  "ko": "유화 · 아티스틱"
+ },
+ "For work": {
+  "zh": "用于工作",
+  "es": "Para el trabajo",
+  "fr": "Pour le travail",
+  "de": "Für die Arbeit",
+  "it": "Per il lavoro",
+  "pt": "Para o trabalho",
+  "ja": "仕事用",
+  "ko": "업무용"
+ },
+ "LinkedIn, resumes, company pages and press kits.": {
+  "zh": "领英、简历、公司主页和新闻资料包。",
+  "es": "LinkedIn, currículums, páginas de empresa y kits de prensa.",
+  "fr": "LinkedIn, CV, pages d’entreprise et dossiers de presse.",
+  "de": "LinkedIn, Lebensläufe, Unternehmensseiten und Pressemappen.",
+  "it": "LinkedIn, CV, pagine aziendali e cartelle stampa.",
+  "pt": "LinkedIn, currículos, páginas de empresa e kits de imprensa.",
+  "ja": "LinkedIn、履歴書、会社ページ、プレスキット。",
+  "ko": "LinkedIn, 이력서, 회사 페이지, 보도 자료 키트."
+ },
+ "One upload, many looks": {
+  "zh": "一次上传，多种造型",
+  "es": "Una subida, muchos looks",
+  "fr": "Un seul envoi, plusieurs looks",
+  "de": "Ein Upload, viele Looks",
+  "it": "Un caricamento, molti look",
+  "pt": "Um envio, muitos visuais",
+  "ja": "1回のアップロードで、さまざまなルック",
+  "ko": "한 번 업로드로 다양한 스타일"
+ },
+ "Switch styles and compare, without re-uploading.": {
+  "zh": "切换风格并对比，无需重新上传。",
+  "es": "Cambia de estilo y compara, sin volver a subir.",
+  "fr": "Changez de style et comparez, sans renvoyer.",
+  "de": "Wechsle den Stil und vergleiche, ohne erneut hochzuladen.",
+  "it": "Cambia stile e confronta, senza ricaricare.",
+  "pt": "Troque de estilo e compare, sem enviar novamente.",
+  "ja": "再アップロードせずにスタイルを切り替えて比較できます。",
+  "ko": "다시 업로드하지 않고 스타일을 바꾸고 비교할 수 있습니다."
+ },
+ "Yours to use": {
+  "zh": "归你使用",
+  "es": "Tuyo para usar",
+  "fr": "À vous d’utiliser",
+  "de": "Deins zur Nutzung",
+  "it": "Tuo da usare",
+  "pt": "Seu para usar",
+  "ja": "自由に使えます",
+  "ko": "자유롭게 사용 가능"
+ },
+ "Full commercial rights to your pack, once payment is added.": {
+  "zh": "接通支付后，你的照片包拥有完整商用权。",
+  "es": "Derechos comerciales completos de tu paquete, una vez añadido el pago.",
+  "fr": "Droits commerciaux complets sur votre pack, une fois le paiement ajouté.",
+  "de": "Volle kommerzielle Rechte an deinem Paket, sobald die Zahlung hinzugefügt ist.",
+  "it": "Diritti commerciali completi sul tuo pacchetto, una volta aggiunto il pagamento.",
+  "pt": "Direitos comerciais completos do seu pacote, assim que o pagamento for adicionado.",
+  "ja": "決済が追加されれば、写真セットの完全な商用利用権が得られます。",
+  "ko": "결제가 추가되면 사진 세트에 대한 완전한 상업적 권리를 얻습니다."
+ },
+ "FAQ": {
+  "zh": "常见问题",
+  "es": "PREGUNTAS FRECUENTES",
+  "fr": "FAQ",
+  "de": "FAQ",
+  "it": "FAQ",
+  "pt": "PERGUNTAS FREQUENTES",
+  "ja": "よくある質問",
+  "ko": "자주 묻는 질문"
+ },
+ "Common questions.": {
+  "zh": "常见问题。",
+  "es": "Preguntas frecuentes.",
+  "fr": "Questions fréquentes.",
+  "de": "Häufige Fragen.",
+  "it": "Domande frequenti.",
+  "pt": "Perguntas frequentes.",
+  "ja": "よくある質問。",
+  "ko": "자주 묻는 질문."
+ },
+ "What is Headshot Studio?": {
+  "zh": "什么是 Headshot Studio？",
+  "es": "¿Qué es Headshot Studio?",
+  "fr": "Qu’est-ce que Headshot Studio ?",
+  "de": "Was ist Headshot Studio?",
+  "it": "Cos’è Headshot Studio?",
+  "pt": "O que é o Headshot Studio?",
+  "ja": "Headshot Studio とは？",
+  "ko": "Headshot Studio란 무엇인가요?"
+ },
+ "It turns your everyday photos into professional portraits and artistic portraits. This prototype shows the flow and styles; payment comes later, after the flow works end to end.": {
+  "zh": "它能把你的日常照片变成专业肖像和艺术肖像。本原型展示流程和风格；支付将在流程跑通后再接通。",
+  "es": "Convierte tus fotos cotidianas en retratos profesionales y artísticos. Este prototipo muestra el flujo y los estilos; el pago llegará después, cuando el flujo funcione de principio a fin.",
+  "fr": "Il transforme vos photos quotidiennes en portraits professionnels et artistiques. Ce prototype montre le flux et les styles ; le paiement viendra plus tard, une fois le flux entièrement fonctionnel.",
+  "de": "Es verwandelt deine Alltagsfotos in professionelle und künstlerische Porträts. Dieser Prototyp zeigt Ablauf und Stile; die Zahlung folgt später, wenn der Ablauf durchgehend funktioniert.",
+  "it": "Trasforma le tue foto quotidiane in ritratti professionali e artistici. Questo prototipo mostra il flusso e gli stili; il pagamento arriverà dopo, quando il flusso funzionerà fino in fondo.",
+  "pt": "Ele transforma suas fotos do dia a dia em retratos profissionais e artísticos. Este protótipo mostra o fluxo e os estilos; o pagamento virá depois, quando o fluxo funcionar de ponta a ponta.",
+  "ja": "日常の写真をプロのポートレートやアーティスティックなポートレートに変えます。このプロトタイプは流れとスタイルを示すもので、決済は流れが最後まで動いてから追加されます。",
+  "ko": "일상 사진을 전문적이고 예술적인 초상화로 바꿔줍니다. 이 프로토타입은 흐름과 스타일을 보여주며, 결제는 흐름이 끝까지 동작한 뒤에 추가됩니다."
+ },
+ "Can I try it for free in the prototype?": {
+  "zh": "在原型阶段可以免费试用吗？",
+  "es": "¿Puedo probarlo gratis en el prototipo?",
+  "fr": "Puis-je l’essayer gratuitement dans le prototype ?",
+  "de": "Kann ich es im Prototyp kostenlos testen?",
+  "it": "Posso provarlo gratuitamente nel prototipo?",
+  "pt": "Posso experimentar grátis no protótipo?",
+  "ja": "プロトタイプで無料で試せますか？",
+  "ko": "프로토타입에서 무료로 체험할 수 있나요?"
+ },
+ "Yes, in this prototype phase there is no payment. The upload preview above is the test flow; full generation is tested with a real photo next.": {
+  "zh": "可以，在原型阶段没有支付。上面的上传预览是测试流程；完整生成已用真实照片测试过。",
+  "es": "Sí, en esta fase de prototipo no hay pago. La vista previa de subida de arriba es el flujo de prueba; la generación completa se prueba con una foto real a continuación.",
+  "fr": "Oui, dans cette phase de prototype, il n’y a aucun paiement. L’aperçu d’envoi ci-dessus est le flux de test ; la génération complète est testée ensuite avec une vraie photo.",
+  "de": "Ja, in dieser Prototyp-Phase gibt es keine Zahlung. Die Upload-Vorschau oben ist der Testablauf; die vollständige Generierung wird als Nächstes mit einem echten Foto getestet.",
+  "it": "Sì, in questa fase di prototipo non c’è pagamento. L’anteprima di caricamento qui sopra è il flusso di prova; la generazione completa viene testata dopo con una foto reale.",
+  "pt": "Sim, nesta fase de protótipo não há pagamento. A prévia de envio acima é o fluxo de teste; a geração completa é testada em seguida com uma foto real.",
+  "ja": "はい、このプロトタイプ段階では決済はありません。上のアップロードプレビューがテストの流れで、完全な生成は実際の写真で次にテストされます。",
+  "ko": "네, 이 프로토타입 단계에서는 결제가 없습니다. 위의 업로드 미리보기가 테스트 흐름이며, 전체 생성은 실제 사진으로 다음에 테스트됩니다."
+ },
+ "Is my photo safe?": {
+  "zh": "我的照片安全吗？",
+  "es": "¿Mi foto está segura?",
+  "fr": "Ma photo est-elle en sécurité ?",
+  "de": "Ist mein Foto sicher?",
+  "it": "La mia foto è al sicuro?",
+  "pt": "Minha foto está segura?",
+  "ja": "私の写真は安全ですか？",
+  "ko": "내 사진은 안전한가요?"
+ },
+ "Photos are used only to generate your pack, are never published, are never used to train a model, and are deleted after 7 days.": {
+  "zh": "照片仅用于生成你的照片包，从不公开，从不用于训练模型，并将在 7 天后删除。",
+  "es": "Las fotos solo se usan para generar tu paquete, nunca se publican, nunca se usan para entrenar un modelo y se eliminan a los 7 días.",
+  "fr": "Les photos servent uniquement à générer votre pack, ne sont jamais publiées, ne servent jamais à entraîner un modèle et sont supprimées après 7 jours.",
+  "de": "Fotos werden nur zur Erstellung deines Pakets verwendet, nie veröffentlicht, nie zum Training eines Modells genutzt und nach 7 Tagen gelöscht.",
+  "it": "Le foto vengono usate solo per generare il tuo pacchetto, non vengono mai pubblicate, non vengono mai usate per addestrare un modello e vengono eliminate dopo 7 giorni.",
+  "pt": "As fotos são usadas apenas para gerar seu pacote, nunca são publicadas, nunca são usadas para treinar um modelo e são excluídas após 7 dias.",
+  "ja": "写真は写真セットの生成にのみ使用され、公開されることも、モデルの学習に使われることもなく、7日後に削除されます。",
+  "ko": "사진은 사진 세트 생성에만 사용되며, 공개되지 않고, 모델 학습에 사용되지 않으며, 7일 후에 삭제됩니다."
+ },
+ "What styles are available?": {
+  "zh": "有哪些风格可选？",
+  "es": "¿Qué estilos están disponibles?",
+  "fr": "Quels styles sont disponibles ?",
+  "de": "Welche Stile gibt es?",
+  "it": "Quali stili sono disponibili?",
+  "pt": "Quais estilos estão disponíveis?",
+  "ja": "どんなスタイルがありますか？",
+  "ko": "어떤 스타일이 있나요?"
+ },
+ "Corporate grey studio, outdoor natural light, black-and-white artistic, and full-body editorial in the prototype. Outfit, background, styling and pose can be changed within any style. More combinations can be added after launch.": {
+  "zh": "原型中有企业灰影棚、户外自然光、黑白艺术和全身编辑风。服装、背景、造型和姿势在任何风格内都可以更换。上线后还可以增加更多组合。",
+  "es": "En el prototipo: estudio gris corporativo, luz natural exterior, artístico en blanco y negro y editorial de cuerpo entero. La vestimenta, el fondo, el peinado y la pose se pueden cambiar en cualquier estilo. Se pueden añadir más combinaciones tras el lanzamiento.",
+  "fr": "Dans le prototype : studio gris corporate, lumière naturelle extérieure, artistique noir et blanc et éditorial plein pied. La tenue, le fond, la coiffure et la pose peuvent être changés dans chaque style. D’autres combinaisons pourront être ajoutées après le lancement.",
+  "de": "Im Prototyp: Corporate-Grau-Studio, natürliches Außenlicht, künstlerisches Schwarz-Weiß und Ganzkörper-Editorial. Outfit, Hintergrund, Styling und Pose können in jedem Stil geändert werden. Nach dem Start können weitere Kombinationen hinzugefügt werden.",
+  "it": "Nel prototipo: studio grigio aziendale, luce naturale esterna, artistico in bianco e nero ed editoriale a figura intera. Outfit, sfondo, acconciatura e posa possono essere cambiati in qualsiasi stile. Dopo il lancio si potranno aggiungere altre combinazioni.",
+  "pt": "No protótipo: estúdio cinza corporativo, luz natural externa, artístico em preto e branco e editorial de corpo inteiro. Roupa, fundo, penteado e pose podem ser trocados em qualquer estilo. Mais combinações podem ser adicionadas após o lançamento.",
+  "ja": "プロトタイプでは、コーポレートグレースタジオ、屋外自然光、白黒アーティスティック、全身エディトリアルがあります。服装、背景、スタイリング、ポーズはどのスタイルでも変更できます。公開後にさらに組み合わせを追加できます。",
+  "ko": "프로토타입에는 기업 그레이 스튜디오, 야외 자연광, 흑백 아티스틱, 전신 에디토리얼이 있습니다. 의상, 배경, 스타일링, 포즈는 어떤 스타일에서도 바꿀 수 있습니다. 출시 후 더 많은 조합을 추가할 수 있습니다."
+ },
+ "Can I use a generated photo as a passport photo?": {
+  "zh": "生成图能用作护照照片吗？",
+  "es": "¿Puedo usar una foto generada como foto de pasaporte?",
+  "fr": "Puis-je utiliser une photo générée comme photo de passeport ?",
+  "de": "Kann ich ein generiertes Foto als Passfoto nutzen?",
+  "it": "Posso usare una foto generata come foto per il passaporto?",
+  "pt": "Posso usar uma foto gerada como foto de passaporte?",
+  "ja": "生成された写真をパスポート写真として使えますか？",
+  "ko": "생성된 사진을 여권 사진으로 사용할 수 있나요?"
+ },
+ "No. Official passport and ID photos must be a real, unedited photo that meets the issuing authority's rules. We do not sell AI-generated photos for official ID use.": {
+  "zh": "不能。官方护照和证件照片必须是符合发证机构规则的真实、未编辑照片。我们不出售用于官方证件的 AI 生成照片。",
+  "es": "No. Las fotos oficiales de pasaporte e identificación deben ser una foto real, sin editar, que cumpla las reglas de la autoridad emisora. No vendemos fotos generadas por IA para uso oficial de identificación.",
+  "fr": "Non. Les photos officielles de passeport et d’identité doivent être une vraie photo, non retouchée, conforme aux règles de l’autorité émettrice. Nous ne vendons pas de photos générées par IA pour un usage officiel d’identité.",
+  "de": "Nein. Offizielle Pass- und Ausweisfotos müssen ein echtes, unbearbeitetes Foto sein, das den Regeln der ausstellenden Behörde entspricht. Wir verkaufen keine KI-generierten Fotos für die offizielle Ausweisnutzung.",
+  "it": "No. Le foto ufficiali per passaporto e documenti devono essere una foto reale, non modificata, conforme alle regole dell’autorità emittente. Non vendiamo foto generate dall’IA per uso ufficiale come documento.",
+  "pt": "Não. Fotos oficiais de passaporte e documento devem ser uma foto real, sem edição, que atenda às regras da autoridade emissora. Não vendemos fotos geradas por IA para uso oficial de documento.",
+  "ja": "いいえ。公式のパスポートや身分証明書の写真は、発行機関の規則を満たす実際の未編集の写真でなければなりません。公式の身分証明用に AI 生成写真を販売していません。",
+  "ko": "아니요. 공식 여권 및 신분증 사진은 발급 기관의 규정을 충족하는 실제 미편집 사진이어야 합니다. 공식 신분증 용도로 AI 생성 사진을 판매하지 않습니다."
+ },
+ "Professional portraits from your phone photos. Prototype — not yet for sale.": {
+  "zh": "用手机照片生成专业肖像。原型阶段——暂未开售。",
+  "es": "Retratos profesionales a partir de las fotos de tu teléfono. Prototipo — aún no está a la venta.",
+  "fr": "Portraits professionnels à partir des photos de votre téléphone. Prototype — pas encore en vente.",
+  "de": "Professionelle Porträts aus deinen Handyfotos. Prototyp — noch nicht im Verkauf.",
+  "it": "Ritratti professionali dalle foto del tuo telefono. Prototipo — non ancora in vendita.",
+  "pt": "Retratos profissionais a partir das fotos do seu celular. Protótipo — ainda não está à venda.",
+  "ja": "スマホの写真から作るプロのポートレート。プロトタイプ — まだ販売していません。",
+  "ko": "휴대폰 사진으로 만드는 전문 초상화. 프로토타입 — 아직 판매하지 않습니다."
+ },
+ "Sitemap": {
+  "zh": "网站地图",
+  "es": "Mapa del sitio",
+  "fr": "Plan du site",
+  "de": "Sitemap",
+  "it": "Mappa del sito",
+  "pt": "Mapa do site",
+  "ja": "サイトマップ",
+  "ko": "사이트맵"
+ },
+ "Try it": {
+  "zh": "试试看",
+  "es": "Pruébalo",
+  "fr": "Essayez",
+  "de": "Ausprobieren",
+  "it": "Provalo",
+  "pt": "Experimente",
+  "ja": "試してみる",
+  "ko": "체험하기"
+ },
+ "Styles": {
+  "zh": "风格",
+  "es": "Estilos",
+  "fr": "Styles",
+  "de": "Stile",
+  "it": "Stili",
+  "pt": "Estilos",
+  "ja": "スタイル",
+  "ko": "스타일"
+ },
+ "Privacy (to be added for Paddle review)": {
+  "zh": "隐私政策（Paddle 审核时补齐）",
+  "es": "Privacidad (se añadirá para la revisión de Paddle)",
+  "fr": "Confidentialité (à ajouter pour l’examen Paddle)",
+  "de": "Datenschutz (für die Paddle-Prüfung hinzuzufügen)",
+  "it": "Privacy (da aggiungere per la revisione Paddle)",
+  "pt": "Privacidade (a ser adicionada para a revisão da Paddle)",
+  "ja": "プライバシー（Paddle 審査用に追加予定）",
+  "ko": "개인정보처리방침 (Paddle 심사 시 추가 예정)"
+ },
+ "About": {
+  "zh": "关于",
+  "es": "Acerca de",
+  "fr": "À propos",
+  "de": "Über uns",
+  "it": "Informazioni",
+  "pt": "Sobre",
+  "ja": "会社概要",
+  "ko": "소개"
+ },
+ "Photos are deleted after 7 days. No payment is connected in this prototype phase.": {
+  "zh": "照片将在 7 天后删除。原型阶段暂未接通支付。",
+  "es": "Las fotos se eliminan a los 7 días. No hay pago conectado en esta fase de prototipo.",
+  "fr": "Les photos sont supprimées après 7 jours. Aucun paiement n’est connecté dans cette phase de prototype.",
+  "de": "Fotos werden nach 7 Tagen gelöscht. In dieser Prototyp-Phase ist keine Zahlung angebunden.",
+  "it": "Le foto vengono eliminate dopo 7 giorni. In questa fase di prototipo non è collegato alcun pagamento.",
+  "pt": "As fotos são excluídas após 7 dias. Nenhum pagamento está conectado nesta fase de protótipo.",
+  "ja": "写真は7日後に削除されます。このプロトタイプ段階では決済は接続されていません。",
+  "ko": "사진은 7일 후에 삭제됩니다. 이 프로토타입 단계에서는 결제가 연결되어 있지 않습니다."
+ },
+ "© Headshot Studio prototype. Brand, photos and layout are original to this prototype; the reference site's brand, badges and review content were not copied.": {
+  "zh": "© Headshot Studio 原型。品牌、照片和排版均为本原型原创；未复制参考站点的品牌、徽章和评价内容。",
+  "es": "© Prototipo de Headshot Studio. La marca, las fotos y el diseño son originales de este prototipo; no se copió la marca, las insignias ni el contenido de reseñas del sitio de referencia.",
+  "fr": "© Prototype Headshot Studio. La marque, les photos et la mise en page sont originales à ce prototype ; la marque, les badges et le contenu d’avis du site de référence n’ont pas été copiés.",
+  "de": "© Headshot-Studio-Prototyp. Marke, Fotos und Layout sind Originale dieses Prototyps; Marke, Badges und Bewertungsinhalte der Referenzseite wurden nicht kopiert.",
+  "it": "© Prototipo Headshot Studio. Marchio, foto e layout sono originali di questo prototipo; non sono stati copiati marchio, badge e contenuti di recensione del sito di riferimento.",
+  "pt": "© Protótipo Headshot Studio. Marca, fotos e layout são originais deste protótipo; a marca, os selos e o conteúdo de avaliações do site de referência não foram copiados.",
+  "ja": "© Headshot Studio プロトタイプ。ブランド、写真、レイアウトはこのプロトタイプ独自のもので、参考サイトのブランド、バッジ、レビュー内容はコピーしていません。",
+  "ko": "© Headshot Studio 프로토타입. 브랜드, 사진, 레이아웃은 이 프로토타입 고유의 것이며, 참고 사이트의 브랜드, 배지, 후기 콘텐츠를 복사하지 않았습니다."
+ },
+ "Please choose a photo first.": {
+  "zh": "请先选择一张照片。",
+  "es": "Elige primero una foto.",
+  "fr": "Choisissez d’abord une photo.",
+  "de": "Wähle zuerst ein Foto aus.",
+  "it": "Scegli prima una foto.",
+  "pt": "Escolha primeiro uma foto.",
+  "ja": "まず写真を選んでください。",
+  "ko": "먼저 사진을 선택하세요."
+ },
+ "Download your portrait": {
+  "zh": "下载你的肖像",
+  "es": "Descargar mi retrato",
+  "fr": "Télécharger mon portrait",
+  "de": "Mein Porträt herunterladen",
+  "it": "Scarica il mio ritratto",
+  "pt": "Baixar meu retrato",
+  "ja": "ポートレートをダウンロード",
+  "ko": "내 초상화 다운로드"
+ },
+ "Selected:": {
+  "zh": "已选：",
+  "es": "Seleccionado:",
+  "fr": "Sélectionné :",
+  "de": "Ausgewählt:",
+  "it": "Selezionato:",
+  "pt": "Selecionado:",
+  "ja": "選択済み：",
+  "ko": "선택됨:"
+ },
+ "Short": {
+  "zh": "短发",
+  "es": "Corto",
+  "fr": "Court",
+  "de": "Kurz",
+  "it": "Corto",
+  "pt": "Curto",
+  "ja": "ショート",
+  "ko": "숏"
+ },
+ "Medium": {
+  "zh": "中长",
+  "es": "Medio",
+  "fr": "Moyen",
+  "de": "Mittel",
+  "it": "Medio",
+  "pt": "Médio",
+  "ja": "ミディアム",
+  "ko": "미디엄"
+ },
+ "Long": {
+  "zh": "长发",
+  "es": "Largo",
+  "fr": "Long",
+  "de": "Lang",
+  "it": "Lungo",
+  "pt": "Longo",
+  "ja": "ロング",
+  "ko": "롱"
+ },
+ "Straight": {
+  "zh": "直发",
+  "es": "Liso",
+  "fr": "Lisse",
+  "de": "Glatt",
+  "it": "Liscio",
+  "pt": "Liso",
+  "ja": "ストレート",
+  "ko": "스트레이트"
+ },
+ "Slightly wavy": {
+  "zh": "微卷",
+  "es": "Ligeramente ondulado",
+  "fr": "Légèrement ondulé",
+  "de": "Leicht gewellt",
+  "it": "Leggermente ondulato",
+  "pt": "Levemente ondulado",
+  "ja": "ややウェーブ",
+  "ko": "약간 웨이브"
+ },
+ "Curly": {
+  "zh": "卷发",
+  "es": "Rizado",
+  "fr": "Bouclé",
+  "de": "Lockig",
+  "it": "Riccio",
+  "pt": "Cacheado",
+  "ja": "カーリー",
+  "ko": "곱슬"
+ },
+ "Natural coily": {
+  "zh": "自然卷",
+  "es": "Rizado natural",
+  "fr": "Bouclé naturel",
+  "de": "Natürliche Locken",
+  "it": "Ricci naturali",
+  "pt": "Cachos naturais",
+  "ja": "ナチュラルカーリー",
+  "ko": "자연스러운 곱슬"
+ },
+ "Braids": {
+  "zh": "编发",
+  "es": "Trenzas",
+  "fr": "Tresses",
+  "de": "Zöpfe",
+  "it": "Trecce",
+  "pt": "Tranças",
+  "ja": "三つ編み",
+  "ko": "땋은 머리"
+ },
+ "Locs": {
+  "zh": "脏辫",
+  "es": "Locs",
+  "fr": "Locs",
+  "de": "Locs",
+  "it": "Locs",
+  "pt": "Locs",
+  "ja": "ロックス",
+  "ko": "록스"
+ },
+ "Afro": {
+  "zh": "爆炸头",
+  "es": "Afro",
+  "fr": "Afro",
+  "de": "Afro",
+  "it": "Afro",
+  "pt": "Afro",
+  "ja": "アフロ",
+  "ko": "아프로"
+ },
+ "Fade / short neat": {
+  "zh": "渐变短发",
+  "es": "Degradado / corto pulcro",
+  "fr": "Dégradé / court net",
+  "de": "Fade / kurz gepflegt",
+  "it": "Sfumato / corto ordinato",
+  "pt": "Degradê / curto arrumado",
+  "ja": "フェード / 短く整えた",
+  "ko": "페이드 / 깔끔한 숏"
+ },
+ "Ponytail": {
+  "zh": "马尾",
+  "es": "Coleta",
+  "fr": "Queue de cheval",
+  "de": "Pferdeschwanz",
+  "it": "Coda di cavallo",
+  "pt": "Rabo de cavalo",
+  "ja": "ポニーテール",
+  "ko": "포니테일"
+ },
+ "Low bun": {
+  "zh": "低髻",
+  "es": "Moño bajo",
+  "fr": "Chignon bas",
+  "de": "Tiefer Dutt",
+  "it": "Chignon basso",
+  "pt": "Coque baixo",
+  "ja": "低いお団子",
+  "ko": "낮은 번"
+ },
+ "Loose hair": {
+  "zh": "披发",
+  "es": "Cabello suelto",
+  "fr": "Cheveux lâchés",
+  "de": "Offene Haare",
+  "it": "Capelli sciolti",
+  "pt": "Cabelo solto",
+  "ja": "ダウンヘア",
+  "ko": "풀어헤친 머리"
+ },
+ "Grey studio": {
+  "zh": "灰色影棚",
+  "es": "Estudio gris",
+  "fr": "Studio gris",
+  "de": "Graues Studio",
+  "it": "Studio grigio",
+  "pt": "Estúdio cinza",
+  "ja": "グレースタジオ",
+  "ko": "그레이 스튜디오"
+ },
+ "Office": {
+  "zh": "办公室",
+  "es": "Oficina",
+  "fr": "Bureau",
+  "de": "Büro",
+  "it": "Ufficio",
+  "pt": "Escritório",
+  "ja": "オフィス",
+  "ko": "사무실"
+ },
+ "Park": {
+  "zh": "公园",
+  "es": "Parque",
+  "fr": "Parc",
+  "de": "Park",
+  "it": "Parco",
+  "pt": "Parque",
+  "ja": "公園",
+  "ko": "공원"
+ },
+ "City street": {
+  "zh": "城市街道",
+  "es": "Calle urbana",
+  "fr": "Rue de ville",
+  "de": "Stadtstraße",
+  "it": "Strada cittadina",
+  "pt": "Rua da cidade",
+  "ja": "街並み",
+  "ko": "도시 거리"
+ },
+ "Cafe terrace": {
+  "zh": "咖啡馆露台",
+  "es": "Terraza de café",
+  "fr": "Terrasse de café",
+  "de": "Café-Terrasse",
+  "it": "Terrazza del caffè",
+  "pt": "Terraço de café",
+  "ja": "カフェテラス",
+  "ko": "카페 테라스"
+ },
+ "Black suit": {
+  "zh": "黑色西装",
+  "es": "Traje negro",
+  "fr": "Costume noir",
+  "de": "Schwarzer Anzug",
+  "it": "Abito nero",
+  "pt": "Terno preto",
+  "ja": "黒スーツ",
+  "ko": "블랙 슈트"
+ },
+ "Navy suit + white shirt": {
+  "zh": "深蓝西装 + 白衬衫",
+  "es": "Traje azul marino + camisa blanca",
+  "fr": "Costume bleu marine + chemise blanche",
+  "de": "Navy-Anzug + weißes Hemd",
+  "it": "Abito blu + camicia bianca",
+  "pt": "Terno azul-marinho + camisa branca",
+  "ja": "ネイビースーツ + 白シャツ",
+  "ko": "네이비 슈트 + 흰 셔츠"
+ },
+ "Blazer + white shirt": {
+  "zh": "西装外套 + 白衬衫",
+  "es": "Blazer + camisa blanca",
+  "fr": "Blazer + chemise blanche",
+  "de": "Blazer + weißes Hemd",
+  "it": "Blazer + camicia bianca",
+  "pt": "Blazer + camisa branca",
+  "ja": "ブレザー + 白シャツ",
+  "ko": "블레이저 + 흰 셔츠"
+ },
+ "Dark coat": {
+  "zh": "深色大衣",
+  "es": "Abrigo oscuro",
+  "fr": "Manteau foncé",
+  "de": "Dunkler Mantel",
+  "it": "Cappotto scuro",
+  "pt": "Casaco escuro",
+  "ja": "ダークコート",
+  "ko": "다크 코트"
+ },
+ "Camel coat": {
+  "zh": "驼色大衣",
+  "es": "Abrigo camel",
+  "fr": "Manteau camel",
+  "de": "Camel-Mantel",
+  "it": "Cappotto cammello",
+  "pt": "Casaco camel",
+  "ja": "キャメルコート",
+  "ko": "카멜 코트"
+ }
 };
-const OPT_ZH = {
-"Short": "短发", "Medium": "中长", "Long": "长发",
-"Straight": "直发", "Slightly wavy": "微卷", "Curly": "卷发", "Natural coily": "自然卷", "Braids": "编发", "Locs": "脏辫", "Afro": "爆炸头", "Fade / short neat": "渐变短发", "Ponytail": "马尾", "Low bun": "低髻", "Loose hair": "披发",
-"Grey studio": "灰色影棚", "Office": "办公室", "Park": "公园", "City street": "城市街道", "Cafe terrace": "咖啡馆露台",
-"Black suit": "黑色西装", "Navy suit + white shirt": "深蓝西装 + 白衬衫", "Blazer + white shirt": "西装外套 + 白衬衫", "Dark coat": "深色大衣", "Camel coat": "驼色大衣"
+const PRE = {
+ "原图": "Original",
+ "生成后": "Generated",
+ "试试这个风格": "Try this style",
+ "你选的风格：": "Your style:",
+ "（点上方任意一个“试试这个风格”会自动带到这里并换选项）": "(Click any “Try this style” button above to jump here and switch options)",
+ "发长 Hair length": "Hair length",
+ "发型 Hairstyle": "Hairstyle",
+ "背景 Background": "Background",
+ "服装 Outfit": "Outfit",
+ "上传照片：": "Upload a photo:",
+ "已选：Long · Slightly wavy · Grey studio · Black suit": "Selected: Long · Slightly wavy · Grey studio · Black suit"
 };
-const STYLE_ZH = {
-"avatar": "分身 · 黑色西装", "woman-fullbody": "女士 · 全身编辑风", "man-fullbody": "男士 · 全身编辑风",
-"man-corporate": "企业影棚", "woman-corporate": "女士 · 企业影棚", "workplace": "职场"
-};
+const LANG_LABEL = {en:"en", zh:"zh-CN", es:"es", fr:"fr", de:"de", it:"it", pt:"pt", ja:"ja", ko:"ko"};
+const REV = {};
+Object.entries(TR).forEach(([en, t])=>{ Object.entries(t).forEach(([lang, txt])=>{ (REV[lang] = REV[lang] || {})[txt] = en; }); });
 let CURRENT_LANG = "en";
-const EN_TO_ZH = {}, ZH_TO_EN = {};
-Object.entries(I18N_MAP).forEach(([k, v])=>{
-  const isZhKey = /[\u4e00-\u9fff]/.test(k);
-  const enStr = v.en || (isZhKey ? null : k);
-  const zhStr = v.zh || (isZhKey ? k : null);
-  if(enStr && zhStr){ EN_TO_ZH[enStr]=zhStr; ZH_TO_EN[zhStr]=enStr; EN_TO_ZH[k]=zhStr; ZH_TO_EN[k]=enStr; }
-});
-function translateTextNode(node, lang){
-  const t = node.nodeValue.trim();
-  if(!t) return;
-  const target = lang==="zh" ? EN_TO_ZH[t] : ZH_TO_EN[t];
-  if(target) node.nodeValue = node.nodeValue.replace(t, target);
+function normalizeToEnglish(){
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: n=>{ const p=n.parentElement; if(!p || p.tagName==="SCRIPT" || p.tagName==="STYLE" || p.closest(".lang-switch")) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
+  const ns=[]; while(w.nextNode()) ns.push(w.currentNode);
+  ns.forEach(n=>{ const t=n.nodeValue.trim(); if(PRE[t]) n.nodeValue = n.nodeValue.replace(t, PRE[t]); });
+}
+function translateNode(node, fromLang, toLang){
+  const t = node.nodeValue.trim(); if(!t) return;
+  let en = t;
+  if(fromLang !== "en" && REV[fromLang] && REV[fromLang][t]) en = REV[fromLang][t];
+  if(toLang === "en"){ if(en !== t) node.nodeValue = node.nodeValue.replace(t, en); return; }
+  const target = TR[en] && TR[en][toLang];
+  if(target && target !== t) node.nodeValue = node.nodeValue.replace(t, target);
 }
 function applyLang(lang){
+  const from = CURRENT_LANG;
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: n=>{ const p=n.parentElement; if(!p || p.tagName==="SCRIPT" || p.tagName==="STYLE" || p.closest(".lang-switch")) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
+  const ns=[]; while(w.nextNode()) ns.push(w.currentNode);
+  ns.forEach(n=>translateNode(n, from, lang));
   CURRENT_LANG = lang;
   try{ localStorage.setItem("hs-lang", lang); }catch(e){}
-  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
-  document.querySelectorAll("[data-lang-btn]").forEach(b=>b.classList.toggle("active", b.dataset.langBtn===lang));
-  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: n=>{ const p=n.parentElement; if(!p || p.tagName==="SCRIPT" || p.tagName==="STYLE" || p.closest(".lang-switch")) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
-  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
-  nodes.forEach(n=>translateTextNode(n, lang));
-  // Style dropdown: keep value English (Worker prompt), translate display text
+  document.documentElement.lang = LANG_LABEL[lang] || "en";
+  const sel = document.getElementById("langSelect"); if(sel) sel.value = lang;
   const styleSel = document.getElementById("tryStyle");
+  const STYLE_DISPLAY = {avatar:"Avatar · Black suit", "woman-fullbody":"Woman · Full-body editorial", "man-fullbody":"Man · Full-body editorial", "man-corporate":"Corporate studio", "woman-corporate":"Woman · Corporate studio", workplace:"Workplace"};
   if(styleSel){
     const cur = styleSel.value;
-    [...styleSel.options].forEach(o=>{ o.text = lang==="zh" ? (STYLE_ZH[o.value]||o.value) : o.value.replace(" · ", " · "); if(o.value==="avatar" && lang==="en") o.text="Avatar · Black suit"; if(o.value==="woman-fullbody" && lang==="en") o.text="Woman · Full-body editorial"; if(o.value==="man-fullbody" && lang==="en") o.text="Man · Full-body editorial"; if(o.value==="man-corporate" && lang==="en") o.text="Corporate studio"; if(o.value==="woman-corporate" && lang==="en") o.text="Woman · Corporate studio"; if(o.value==="workplace" && lang==="en") o.text="Workplace"; });
+    [...styleSel.options].forEach(o=>{ const disp = STYLE_DISPLAY[o.value] || o.value; o.text = lang==="en" ? disp : ((TR[disp] && TR[disp][lang]) || disp); });
     styleSel.value = cur;
   }
-  // Variable selects: value stays English, display text translated in zh mode
-  document.querySelectorAll("#tryVars select").forEach(sel=>{
-    const cur = sel.value;
-    [...sel.options].forEach(o=>{ if(lang==="zh") o.text = OPT_ZH[o.value]||o.value; else o.text = o.value; });
-    sel.value = cur;
+  document.querySelectorAll("#tryVars select").forEach(sel2=>{
+    const cur = sel2.value;
+    [...sel2.options].forEach(o=>{ o.text = lang==="en" ? o.value : ((TR[o.value] && TR[o.value][lang]) || o.value); });
+    sel2.value = cur;
   });
-  // Selected note
   const note = document.querySelector("#tryVars + .ba-note");
   if(note){
-    const vals = [...document.querySelectorAll("#tryVars select")].map(s=> lang==="zh" ? (OPT_ZH[s.value]||s.value) : s.value);
-    note.textContent = (lang==="zh" ? "已选：" : "Selected: ") + vals.join(" · ");
+    const vals = [...document.querySelectorAll("#tryVars select")].map(x=> lang==="en" ? x.value : ((TR[x.value] && TR[x.value][lang]) || x.value));
+    const prefix = lang==="en" ? "Selected:" : ((TR["Selected:"] && TR["Selected:"][lang]) || "Selected:");
+    note.textContent = prefix + " " + vals.join(" · ");
   }
-  document.title = lang==="zh" ? "Headshot Studio — 专业 AI 肖像" : "Headshot Studio — Professional AI Headshots";
+  document.title = lang==="en" ? "Headshot Studio — Professional AI Headshots" : "Headshot Studio — " + (lang==="zh" ? "专业 AI 肖像" : lang==="es" ? "Retratos profesionales con IA" : lang==="fr" ? "Portraits professionnels IA" : lang==="de" ? "Professionelle KI-Porträts" : lang==="it" ? "Ritratti professionali IA" : lang==="pt" ? "Retratos profissionais com IA" : lang==="ja" ? "プロ AI ポートレート" : "전문 AI 초상화");
 }
-document.querySelectorAll("[data-lang-btn]").forEach(b=>b.addEventListener("click", ()=>applyLang(b.dataset.langBtn)));
-// Fix note after original change handlers run
+document.getElementById("langSelect").addEventListener("change", e=>applyLang(e.target.value));
+// After a style change rebuilds the variable selects in English, re-apply the current language
+try{ const _origApplyStyle = applyStyle; window.applyStyle = function(st){ _origApplyStyle(st); applyLang(CURRENT_LANG); }; }catch(e){}
 document.querySelectorAll("#tryVars select").forEach(sel=>sel.addEventListener("change", ()=>{
   const note = document.querySelector("#tryVars + .ba-note");
   if(!note) return;
-  const vals = [...document.querySelectorAll("#tryVars select")].map(s=> CURRENT_LANG==="zh" ? (OPT_ZH[s.value]||s.value) : s.value);
-  note.textContent = (CURRENT_LANG==="zh" ? "已选：" : "Selected: ") + vals.join(" · ");
+  const vals = [...document.querySelectorAll("#tryVars select")].map(x=> CURRENT_LANG==="en" ? x.value : ((TR[x.value] && TR[x.value][CURRENT_LANG]) || x.value));
+  const prefix = CURRENT_LANG==="en" ? "Selected:" : ((TR["Selected:"] && TR["Selected:"][CURRENT_LANG]) || "Selected:");
+  note.textContent = prefix + " " + vals.join(" · ");
 }));
-// Translate dynamic status/result text when it changes
-const _status = document.getElementById("status");
-if(_status && window.MutationObserver){
-  new MutationObserver(()=>{ const w=document.createTreeWalker(_status, NodeFilter.SHOW_TEXT); const ns=[]; while(w.nextNode()) ns.push(w.currentNode); ns.forEach(n=>translateTextNode(n, CURRENT_LANG)); }).observe(_status, {childList:true, characterData:true, subtree:true});
-}
+normalizeToEnglish();
 let _saved=null; try{ _saved=localStorage.getItem("hs-lang"); }catch(e){}
-applyLang(_saved || ((navigator.language||"en").toLowerCase().startsWith("zh") ? "zh" : "en"));
+const _nav = (navigator.language||"en").toLowerCase();
+const _detected = _nav.startsWith("zh") ? "zh" : ["es","fr","de","it","pt","ja","ko"].find(c=>_nav.startsWith(c)) || "en";
+applyLang(_saved || _detected);
 </script>
 </body>
 </html>
