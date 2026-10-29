@@ -185,20 +185,6 @@ footer a{color:#bbb;text-decoration:none}
 </div>
 </section>
 
-<!-- PACKS: prices shown, payment deferred -->
-<section>
-<div class="wrap">
-<p class="eyebrow">PACKS — PRICES FOR LATER, NO PAYMENT YET</p>
-<h2>Simple, one-time packs.</h2>
-<div class="grid3">
-<div class="card"><strong>$19</strong><p>20 photos · 2 styles</p></div>
-<div class="card"><strong>$29</strong><p>40 photos · 4 styles</p></div>
-<div class="card"><strong>$49</strong><p>100 photos · All styles</p></div>
-</div>
-<p class="note">Planned model only. Payment is deliberately not connected in this phase.</p>
-</div>
-</section>
-
 <!-- FAQ -->
 <section class="try">
 <div class="wrap">
@@ -212,21 +198,6 @@ footer a{color:#bbb;text-decoration:none}
 </div>
 </section>
 
-<section style="padding-top:20px">
-<div class="wrap">
-<p class="eyebrow">CHOOSE A STYLE</p>
-<h2>One photo, many professional looks.</h2>
-<p>Tap a style to preview it. In the real product, the same person's photo is restyled — these prototype previews use different sample faces, so judge the style, not the likeness.</p>
-<div class="thumbs" id="thumbs">
-<button class="sel" data-img="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp"><img src="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp" alt=""><span>Corporate</span></button>
-<button data-img="samples/media-generation-sample-outdoor-natural-0-01d88411-6406-4527-aed4-41c8c38aa8c5.webp"><img src="samples/media-generation-sample-outdoor-natural-0-01d88411-6406-4527-aed4-41c8c38aa8c5.webp" alt=""><span>Outdoor</span></button>
-<button data-img="samples/media-generation-sample-bw-artistic-0-e5636223-4433-4c25-88ec-645d5f316bf1.webp"><img src="samples/media-generation-sample-bw-artistic-0-e5636223-4433-4c25-88ec-645d5f316bf1.webp" alt=""><span>Black &amp; white</span></button>
-<button data-img="samples/media-generation-sample-oil-painting-0-f5f82855-2dc6-4d51-a535-d031c4367540.webp"><img src="samples/media-generation-sample-oil-painting-0-f5f82855-2dc6-4d51-a535-d031c4367540.webp" alt=""><span>Oil painting</span></button>
-</div>
-<img id="preview" class="preview" src="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp" alt="Selected style preview">
-</div>
-</section>
-
 <footer>
 <div class="wrap">
 <div><h3>Headshot Studio</h3><p>Professional portraits from your phone photos. Prototype — not yet for sale.</p></div>
@@ -237,10 +208,6 @@ footer a{color:#bbb;text-decoration:none}
 </footer>
 
 <script>
-document.querySelectorAll('#thumbs button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('#thumbs button').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
-  document.getElementById('preview').src=b.dataset.img;
-});
 /* Variables live in the upload section below, not in the photo boxes.
    Clicking a card's try button jumps to #try and sets the style there. */
 document.querySelectorAll('.ba-vars').forEach(vars=>{
