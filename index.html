@@ -355,6 +355,8 @@ const I18N_MAP = {
 "服装 Outfit": {en: "Outfit", zh: "服装"},
 "上传照片：": {en: "Upload a photo:", zh: "上传照片："},
 "Generate my portrait": {zh: "生成我的肖像"},
+"你选的风格：": {en: "Your style:", zh: "你选的风格："},
+"（点上方任意一个“试试这个风格”会自动带到这里并换选项）": {en: "(Click any \u201cTry this style\u201d button above to jump here and switch options)", zh: "（点上方任意一个“试试这个风格”会自动带到这里并换选项）"},
 "No signup needed. Photos are not published. Source and generated photos are deleted after 7 days. Generation usually takes 10–60 seconds — please keep this page open.": {zh: "无需注册。照片不会公开。原图和生成图将在 7 天后删除。生成通常需要 10-60 秒，请保持页面打开。"},
 "MAKE IT YOURS": {zh: "让它成为你的"},
 "Your face stays yours. Everything else can change.": {zh: "你的脸还是你的。其他一切都可以改变。"},
@@ -424,7 +426,7 @@ Object.entries(I18N_MAP).forEach(([k, v])=>{
   const isZhKey = /[\u4e00-\u9fff]/.test(k);
   const enStr = v.en || (isZhKey ? null : k);
   const zhStr = v.zh || (isZhKey ? k : null);
-  if(enStr && zhStr){ EN_TO_ZH[enStr]=zhStr; ZH_TO_EN[zhStr]=enStr; }
+  if(enStr && zhStr){ EN_TO_ZH[enStr]=zhStr; ZH_TO_EN[zhStr]=enStr; EN_TO_ZH[k]=zhStr; ZH_TO_EN[k]=enStr; }
 });
 function translateTextNode(node, lang){
   const t = node.nodeValue.trim();
