@@ -63,10 +63,18 @@ footer{background:#0C0C0C;color:#bbb;padding:64px 0 32px}
 footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px}
 footer h3{color:#fff;margin-top:0}
 footer a{color:#bbb;text-decoration:none}
+.lang-switch{position:fixed;top:12px;right:12px;z-index:100;display:flex;gap:6px}
+.lang-switch button{border:1px solid #ddd;background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer}
+.lang-switch button.active{background:#111;color:#fff;border-color:#111}
+img{max-width:100%}
+body{overflow-x:hidden}
+@media(max-width:760px){.ba-grid{grid-template-columns:1fr!important}.ba-vars{grid-template-columns:1fr!important}.trycard{padding:24px 20px}section{padding:56px 0}.hero{gap:24px}}
+@media(max-width:480px){.wrap{padding:0 16px}h1{font-size:44px}h2{font-size:30px}.collage{height:380px}.pill{padding:12px 20px}.trycard{padding:20px 16px}select{max-width:100%}}
 @media(max-width:760px){section{padding:64px 0}.hero{grid-template-columns:1fr}.collage{height:430px}.grid3{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<div class="lang-switch"><button data-lang-btn="en" class="active">EN</button><button data-lang-btn="zh">中文</button></div>
 
 <!-- HERO: no top nav, left text / right tilted collage, in the spirit of the reference site, with our own brand and photos -->
 <section style="padding-top:72px">
@@ -315,6 +323,159 @@ document.getElementById('generateBtn').addEventListener('click', async ()=>{
     status.textContent=(e && e.name==='AbortError') ? 'Generation timed out — please retry.' : ('Failed: '+e.message);
   }finally{ clearInterval(timer); btn.disabled=false; }
 });
+</script>
+
+<script>
+/* Language auto-adapt: default English (main push), Chinese for zh browsers.
+   Manual choice is remembered in localStorage. */
+const I18N_MAP = {
+"AI HEADSHOT STUDIO": {zh: "AI 职业头像工作室"},
+"Turn a phone photo into a professional portrait.": {zh: "用手机照片生成专业职业照。"},
+"Pick a style, upload 1–3 clear photos, and get a pack for LinkedIn, your resume and your company page.": {zh: "选一个风格，上传 1-3 张清晰照片，即可获得可用于领英、简历和公司主页的照片包。"},
+"Try it now": {zh: "立即试试"},
+"Prototype only — no payment yet. The full flow runs first; Paddle checkout is added only after the site works end to end. Demo faces below are AI-generated samples, not real customers.": {zh: "目前为测试阶段，暂未接通支付。先跑通完整流程，确认无误后再接 Paddle 支付。下方示例人脸为 AI 生成样张，并非真实客户。"},
+"BEFORE & AFTER": {zh: "前后对比"},
+"Real examples. Same person, new portrait.": {zh: "真实示例。同一个人，全新肖像。"},
+"Each style gets its own small slider. Drag the line in any box to compare — left is the original, right is the generated portrait.": {zh: "每种风格都有一个小滑块。拖动任意框中的线条进行对比——左侧为原图，右侧为生成后的肖像。"},
+"Avatar · Black suit": {zh: "分身 · 黑色西装"},
+"Woman · Full-body editorial": {zh: "女士 · 全身编辑风"},
+"Man · Full-body editorial": {zh: "男士 · 全身编辑风"},
+"Corporate studio": {zh: "企业影棚"},
+"Woman · Corporate studio": {zh: "女士 · 企业影棚"},
+"Workplace": {zh: "职场"},
+"原图": {en: "Original"},
+"生成后": {en: "Generated"},
+"试试这个风格": {en: "Try this style"},
+"TRY IT NOW": {zh: "现在就试试"},
+"Use your photo to try it.": {zh: "用你的照片试试看。"},
+"Your photo becomes a professional portrait in your chosen style.": {zh: "你的照片会变成你所选风格的专业肖像。"},
+"发长 Hair length": {en: "Hair length", zh: "发长"},
+"发型 Hairstyle": {en: "Hairstyle", zh: "发型"},
+"背景 Background": {en: "Background", zh: "背景"},
+"服装 Outfit": {en: "Outfit", zh: "服装"},
+"上传照片：": {en: "Upload a photo:", zh: "上传照片："},
+"Generate my portrait": {zh: "生成我的肖像"},
+"No signup needed. Photos are not published. Source and generated photos are deleted after 7 days. Generation usually takes 10–60 seconds — please keep this page open.": {zh: "无需注册。照片不会公开。原图和生成图将在 7 天后删除。生成通常需要 10-60 秒，请保持页面打开。"},
+"MAKE IT YOURS": {zh: "让它成为你的"},
+"Your face stays yours. Everything else can change.": {zh: "你的脸还是你的。其他一切都可以改变。"},
+"Outfit, background, styling and pose are all choices, not fixed to a style. Pick a combination and the same person gets a different portrait.": {zh: "服装、背景、造型和姿势都是选择，不一定固定在某种风格上。选一个组合，同一个人会得到不同的肖像。"},
+"Outfit": {zh: "服装"},
+"Suit, blazer, coat, casual — your choice.": {zh: "西装、西装外套、外套、休闲装——随你选择。"},
+"Background": {zh: "背景"},
+"Studio grey, street, park, office.": {zh: "工作室灰、街道、公园、办公室。"},
+"Pose": {zh: "姿势"},
+"Headshot, half-body, full-body.": {zh: "爆头、半身、全身。"},
+"Styling": {zh: "造型"},
+"Natural, editorial, black & white.": {zh: "自然、编辑、黑白。"},
+"REVIEWS": {zh: "评价"},
+"Loved by professionals worldwide.": {zh: "深受全球专业人士喜爱。"},
+"Prototype layout only — these review cards are placeholders. Real customer reviews must replace them before any public launch. Do not publish with placeholder reviews.": {zh: "仅为原型排版——这些评价卡片为占位内容。正式上线前必须替换为真实客户评价。请勿带着占位评价发布。"},
+"STYLE GALLERY": {zh: "风格画廊"},
+"Explore the styles.": {zh: "探索各种风格。"},
+"Corporate · Grey studio": {zh: "企业 · 灰色影棚"},
+"Outdoor · Natural light": {zh: "户外 · 自然光"},
+"Black & white · Artistic": {zh: "黑白 · 艺术"},
+"Oil painting · Artistic": {zh: "油画 · 艺术"},
+"For work": {zh: "用于工作"},
+"LinkedIn, resumes, company pages and press kits.": {zh: "领英、简历、公司主页和新闻资料包。"},
+"One upload, many looks": {zh: "一次上传，多种造型"},
+"Switch styles and compare, without re-uploading.": {zh: "切换风格并对比，无需重新上传。"},
+"Yours to use": {zh: "归你使用"},
+"Full commercial rights to your pack, once payment is added.": {zh: "接通支付后，你的照片包拥有完整商用权。"},
+"FAQ": {zh: "常见问题"},
+"Common questions.": {zh: "常见问题。"},
+"What is Headshot Studio?": {zh: "什么是 Headshot Studio？"},
+"It turns your everyday photos into professional portraits and artistic portraits. This prototype shows the flow and styles; payment comes later, after the flow works end to end.": {zh: "它能把你的日常照片变成专业肖像和艺术肖像。本原型展示流程和风格；支付将在流程跑通后再接通。"},
+"Can I try it for free in the prototype?": {zh: "在原型阶段可以免费试用吗？"},
+"Yes, in this prototype phase there is no payment. The upload preview above is the test flow; full generation is tested with a real photo next.": {zh: "可以，在原型阶段没有支付。上面的上传预览是测试流程；完整生成已用真实照片测试过。"},
+"Is my photo safe?": {zh: "我的照片安全吗？"},
+"Photos are used only to generate your pack, are never published, are never used to train a model, and are deleted after 7 days.": {zh: "照片仅用于生成你的照片包，从不公开，从不用于训练模型，并将在 7 天后删除。"},
+"What styles are available?": {zh: "有哪些风格可选？"},
+"Corporate grey studio, outdoor natural light, black-and-white artistic, and full-body editorial in the prototype. Outfit, background, styling and pose can be changed within any style. More combinations can be added after launch.": {zh: "原型中有企业灰影棚、户外自然光、黑白艺术和全身编辑风。服装、背景、造型和姿势在任何风格内都可以更换。上线后还可以增加更多组合。"},
+"Can I use a generated photo as a passport photo?": {zh: "生成图能用作护照照片吗？"},
+"No. Official passport and ID photos must be a real, unedited photo that meets the issuing authority's rules. We do not sell AI-generated photos for official ID use.": {zh: "不能。官方护照和证件照片必须是符合发证机构规则的真实、未编辑照片。我们不出售用于官方证件的 AI 生成照片。"},
+"Professional portraits from your phone photos. Prototype — not yet for sale.": {zh: "用手机照片生成专业肖像。原型阶段——暂未开售。"},
+"Sitemap": {zh: "网站地图"},
+"Try it": {zh: "试试看"},
+"Styles": {zh: "风格"},
+"Privacy (to be added for Paddle review)": {zh: "隐私政策（Paddle 审核时补齐）"},
+"About": {zh: "关于"},
+"Photos are deleted after 7 days. No payment is connected in this prototype phase.": {zh: "照片将在 7 天后删除。原型阶段暂未接通支付。"},
+"© Headshot Studio prototype. Brand, photos and layout are original to this prototype; the reference site's brand, badges and review content were not copied.": {zh: "© Headshot Studio 原型。品牌、照片和排版均为本原型原创；未复制参考站点的品牌、徽章和评价内容。"},
+"Please choose a photo first.": {zh: "请先选择一张照片。"},
+"Download your portrait": {zh: "下载你的肖像"},
+"Corporate": {zh: "企业"},
+"Outdoor": {zh: "户外"},
+"Avatar": {zh: "分身"}
+};
+const OPT_ZH = {
+"Short": "短发", "Medium": "中长", "Long": "长发",
+"Straight": "直发", "Slightly wavy": "微卷", "Curly": "卷发", "Natural coily": "自然卷", "Braids": "编发", "Locs": "脏辫", "Afro": "爆炸头", "Fade / short neat": "渐变短发", "Ponytail": "马尾", "Low bun": "低髻", "Loose hair": "披发",
+"Grey studio": "灰色影棚", "Office": "办公室", "Park": "公园", "City street": "城市街道", "Cafe terrace": "咖啡馆露台",
+"Black suit": "黑色西装", "Navy suit + white shirt": "深蓝西装 + 白衬衫", "Blazer + white shirt": "西装外套 + 白衬衫", "Dark coat": "深色大衣", "Camel coat": "驼色大衣"
+};
+const STYLE_ZH = {
+"avatar": "分身 · 黑色西装", "woman-fullbody": "女士 · 全身编辑风", "man-fullbody": "男士 · 全身编辑风",
+"man-corporate": "企业影棚", "woman-corporate": "女士 · 企业影棚", "workplace": "职场"
+};
+let CURRENT_LANG = "en";
+const EN_TO_ZH = {}, ZH_TO_EN = {};
+Object.entries(I18N_MAP).forEach(([k, v])=>{
+  const isZhKey = /[\u4e00-\u9fff]/.test(k);
+  const enStr = v.en || (isZhKey ? null : k);
+  const zhStr = v.zh || (isZhKey ? k : null);
+  if(enStr && zhStr){ EN_TO_ZH[enStr]=zhStr; ZH_TO_EN[zhStr]=enStr; }
+});
+function translateTextNode(node, lang){
+  const t = node.nodeValue.trim();
+  if(!t) return;
+  const target = lang==="zh" ? EN_TO_ZH[t] : ZH_TO_EN[t];
+  if(target) node.nodeValue = node.nodeValue.replace(t, target);
+}
+function applyLang(lang){
+  CURRENT_LANG = lang;
+  try{ localStorage.setItem("hs-lang", lang); }catch(e){}
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  document.querySelectorAll("[data-lang-btn]").forEach(b=>b.classList.toggle("active", b.dataset.langBtn===lang));
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {acceptNode: n=>{ const p=n.parentElement; if(!p || p.tagName==="SCRIPT" || p.tagName==="STYLE" || p.closest(".lang-switch")) return NodeFilter.FILTER_REJECT; return NodeFilter.FILTER_ACCEPT; }});
+  const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n=>translateTextNode(n, lang));
+  // Style dropdown: keep value English (Worker prompt), translate display text
+  const styleSel = document.getElementById("tryStyle");
+  if(styleSel){
+    const cur = styleSel.value;
+    [...styleSel.options].forEach(o=>{ o.text = lang==="zh" ? (STYLE_ZH[o.value]||o.value) : o.value.replace(" · ", " · "); if(o.value==="avatar" && lang==="en") o.text="Avatar · Black suit"; if(o.value==="woman-fullbody" && lang==="en") o.text="Woman · Full-body editorial"; if(o.value==="man-fullbody" && lang==="en") o.text="Man · Full-body editorial"; if(o.value==="man-corporate" && lang==="en") o.text="Corporate studio"; if(o.value==="woman-corporate" && lang==="en") o.text="Woman · Corporate studio"; if(o.value==="workplace" && lang==="en") o.text="Workplace"; });
+    styleSel.value = cur;
+  }
+  // Variable selects: value stays English, display text translated in zh mode
+  document.querySelectorAll("#tryVars select").forEach(sel=>{
+    const cur = sel.value;
+    [...sel.options].forEach(o=>{ if(lang==="zh") o.text = OPT_ZH[o.value]||o.value; else o.text = o.value; });
+    sel.value = cur;
+  });
+  // Selected note
+  const note = document.querySelector("#tryVars + .ba-note");
+  if(note){
+    const vals = [...document.querySelectorAll("#tryVars select")].map(s=> lang==="zh" ? (OPT_ZH[s.value]||s.value) : s.value);
+    note.textContent = (lang==="zh" ? "已选：" : "Selected: ") + vals.join(" · ");
+  }
+  document.title = lang==="zh" ? "Headshot Studio — 专业 AI 肖像" : "Headshot Studio — Professional AI Headshots";
+}
+document.querySelectorAll("[data-lang-btn]").forEach(b=>b.addEventListener("click", ()=>applyLang(b.dataset.langBtn)));
+// Fix note after original change handlers run
+document.querySelectorAll("#tryVars select").forEach(sel=>sel.addEventListener("change", ()=>{
+  const note = document.querySelector("#tryVars + .ba-note");
+  if(!note) return;
+  const vals = [...document.querySelectorAll("#tryVars select")].map(s=> CURRENT_LANG==="zh" ? (OPT_ZH[s.value]||s.value) : s.value);
+  note.textContent = (CURRENT_LANG==="zh" ? "已选：" : "Selected: ") + vals.join(" · ");
+}));
+// Translate dynamic status/result text when it changes
+const _status = document.getElementById("status");
+if(_status && window.MutationObserver){
+  new MutationObserver(()=>{ const w=document.createTreeWalker(_status, NodeFilter.SHOW_TEXT); const ns=[]; while(w.nextNode()) ns.push(w.currentNode); ns.forEach(n=>translateTextNode(n, CURRENT_LANG)); }).observe(_status, {childList:true, characterData:true, subtree:true});
+}
+let _saved=null; try{ _saved=localStorage.getItem("hs-lang"); }catch(e){}
+applyLang(_saved || ((navigator.language||"en").toLowerCase().startsWith("zh") ? "zh" : "en"));
 </script>
 </body>
 </html>
