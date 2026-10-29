@@ -145,8 +145,9 @@ footer a{color:#bbb;text-decoration:none}
 <p style="margin-top:16px">上传照片：</p>
 <input type="file" id="photo" accept="image/*" style="margin:16px 0">
 <div id="upreview"></div>
-<p><button class="pill full" onclick="document.getElementById('status').textContent='Prototype: upload preview works. Generation runs in the next test step — no payment, no photo is published.'">Choose a photo</button></p>
-<p id="status" class="note">No signup needed. Photos are not published. Source and generated photos are deleted after 7 days.</p>
+<p><button class="pill full" id="generateBtn">Generate my portrait</button></p>
+<div id="genResult" style="margin-top:16px"></div>
+<p id="status" class="note">No signup needed. Photos are not published. Source and generated photos are deleted after 7 days. Generation usually takes 10–60 seconds — please keep this page open.</p>
 </div>
 </div>
 </section>
@@ -292,6 +293,60 @@ document.getElementById('photo').onchange=e=>{
   const p=document.getElementById('uppreview'); p.innerHTML='';
   [...e.target.files].slice(0,3).forEach(f=>{const i=document.createElement('img');i.style.cssText='width:110px;height:110px;object-fit:cover;border-radius:10px;margin:4px';i.src=URL.createObjectURL(f);p.appendChild(i);});
 };
+/* ---- Synchronous generation via Cloudflare Worker (domestic Seedream Flash) ----
+   Set WORKER_URL to the deployed Worker origin, e.g. https://headshot-studio-xxx.workers.dev
+   Leave it empty until the Worker is deployed with ARK_API_KEY set as a secret.
+   The photo is sent to the Worker only; the API key is never in this page. */
+const WORKER_URL = "https://headshot-studio-worker.332669081.workers.dev";
+function downscaleToDataUri(file){
+  return new Promise((resolve,reject)=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=1024, scale=Math.min(1, max/Math.max(img.width,img.height));
+      const c=document.createElement('canvas');
+      c.width=Math.round(img.width*scale); c.height=Math.round(img.height*scale);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      resolve(c.toDataURL('image/jpeg',0.9));
+    };
+    img.onerror=()=>reject(new Error('Could not read photo'));
+    img.src=URL.createObjectURL(file);
+  });
+}
+document.getElementById('generateBtn').addEventListener('click', async ()=>{
+  const status=document.getElementById('status'), result=document.getElementById('genResult');
+  const file=document.getElementById('photo').files[0];
+  if(!WORKER_URL){ status.textContent='Worker not deployed yet: set WORKER_URL in this page to the deployed Worker origin, with ARK_API_KEY set as a Worker secret, then retry.'; return; }
+  if(!file){ status.textContent='Please choose a photo first.'; return; }
+  const btn=document.getElementById('generateBtn'); btn.disabled=true;
+  result.innerHTML='';
+  let seconds=0;
+  status.textContent='Generating… usually 10–60 seconds, please keep this page open.';
+  const timer=setInterval(()=>{ seconds++; status.textContent='Generating… '+seconds+'s elapsed, please keep this page open.'; },1000);
+  try{
+    const imageBase64=await downscaleToDataUri(file);
+    const payload={
+      style: document.getElementById('tryStyle').value,
+      hairLength: document.getElementById('tryHairLength').value,
+      hairstyle: document.getElementById('tryHairstyle').value,
+      background: document.getElementById('tryBackground').value,
+      outfit: document.getElementById('tryOutfit').value,
+      imageBase64
+    };
+    const ctrl=new AbortController(); setTimeout(()=>ctrl.abort(),100000);
+    const resp=await fetch(WORKER_URL.replace(/\/$/,'')+'/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:ctrl.signal});
+    const data=await resp.json().catch(()=>({}));
+    if(!resp.ok){
+      const friendly={limit_exceeded:'Ark usage limit reached — the owner needs to top up the Ark balance, then retry.',timeout:'Generation timed out after 90 seconds — please retry.',invalid_key:'Image service key is invalid — please tell the site owner.',missing_key:'Worker is not configured yet (ARK_API_KEY missing) — please tell the site owner.'};
+      throw new Error(friendly[data.error] || (data.message || 'Generation failed — please retry.'));
+    }
+    const img=document.createElement('img'); img.src=data.imageUrl; img.style.cssText='width:100%;max-width:520px;border-radius:14px;margin-top:8px';
+    const dl=document.createElement('a'); dl.href=data.imageUrl; dl.textContent='Download your portrait'; dl.className='pill'; dl.style.display='inline-block'; dl.style.marginTop='10px';
+    result.appendChild(img); result.appendChild(document.createElement('br')); result.appendChild(dl);
+    status.textContent='Done — this is your generated portrait. It looks like you if the face, eyes and mole match the original.';
+  }catch(e){
+    status.textContent=(e && e.name==='AbortError') ? 'Generation timed out — please retry.' : ('Failed: '+e.message);
+  }finally{ clearInterval(timer); btn.disabled=false; }
+});
 </script>
 </body>
 </html>
