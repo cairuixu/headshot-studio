@@ -19,11 +19,11 @@ p{font-size:16px;color:var(--grey)} p strong{color:var(--ink)}
 .hero{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
 .hero h1 span{font-family:Georgia,serif}
 .hero .sub{font-size:28px;color:var(--ink);font-weight:700;margin:18px 0 8px}
-.collage{position:relative;height:480px}
-.collage-card{position:absolute;width:60%;margin:0;transition:transform .35s ease,box-shadow .35s ease;will-change:transform;cursor:pointer}
-.collage-card:nth-child(1){left:0;top:30px;transform:rotate(-4deg);z-index:1}
+.collage{position:relative;height:540px}
+.collage-card{position:absolute;width:54%;margin:0;transition:transform .35s ease,box-shadow .35s ease;will-change:transform;cursor:pointer}
+.collage-card:nth-child(1){left:0;top:60px;transform:rotate(-4deg);z-index:1}
 .collage-card:nth-child(2){right:0;top:0;transform:rotate(3deg);z-index:2}
-.collage-card:nth-child(3){left:20%;bottom:0;transform:rotate(-1deg);width:56%;z-index:3}
+.collage-card:nth-child(3){left:25%;bottom:0;transform:rotate(-1deg);width:50%;z-index:3}
 .collage-card img{width:100%;border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.18);object-fit:cover;aspect-ratio:3/4;display:block;transition:box-shadow .35s ease}
 .collage-card:hover{transform:rotate(0deg) scale(1.06);z-index:10}
 .collage-card:hover img{box-shadow:0 28px 56px rgba(0,0,0,.28)}
@@ -63,7 +63,7 @@ footer{background:#0C0C0C;color:#bbb;padding:64px 0 32px}
 footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px}
 footer h3{color:#fff;margin-top:0}
 footer a{color:#bbb;text-decoration:none}
-@media(max-width:760px){section{padding:64px 0}.hero{grid-template-columns:1fr}.collage{height:380px}.grid3{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}}
+@media(max-width:760px){section{padding:64px 0}.hero{grid-template-columns:1fr}.collage{height:430px}.grid3{grid-template-columns:1fr}footer .wrap{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -82,7 +82,7 @@ footer a{color:#bbb;text-decoration:none}
 <div class="collage">
 <figure class="collage-card"><img src="samples/media-generation-sample-corporate-grey-0-c52728f1-b8fc-45f7-a793-e63aa82f3465.webp" alt="Corporate grey studio sample"><span class="tag">Corporate</span></figure>
 <figure class="collage-card"><img src="samples/media-generation-sample-outdoor-natural-0-01d88411-6406-4527-aed4-41c8c38aa8c5.webp" alt="Outdoor natural light sample"><span class="tag">Outdoor</span></figure>
-<figure class="collage-card"><img src="samples/media-generation-sample-oil-painting-0-f5f82855-2dc6-4d51-a535-d031c4367540.webp" alt="Oil painting sample"><span class="tag">Artistic</span></figure>
+<figure class="collage-card"><img src="demo/woman-avatar-v2.webp" alt="Avatar black suit sample"><span class="tag">Avatar</span></figure>
 </div>
 </div>
 </section>
